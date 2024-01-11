@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="registration-style">
+        <h1>Registrasi</h1>
+        <br>
+        <form action="{% url 'signup' %}" method="post" class="form-control">
+            <div class="d-flex justify-content-center">
+                <p> Sudah punya akun? <a href="{% url 'login' %}">Login</a></p>
+            </div>
+            {% csrf_token %}
+            {{ form.as_p}}
+            <div class="d-flex justify-content-center">
+                <button type="submit" name="button" class="btn btn-primary">Regsitrasi</button>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        .registration-style {
+            margin-left: 45px;
+            margin-right: 45px;
+        }
+
+        .helptext {
+            display: none;
+        }
+
+        ul {
+            display: none;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .form-control {
+            text-align: justify;
+            margin-left: 55px;
+            margin-right: 55px;
+            width: 90%;
+        }
+
+    </style>
+{% endblock %}
+

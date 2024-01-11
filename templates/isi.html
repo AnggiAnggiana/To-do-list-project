@@ -1,0 +1,90 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <body>
+        <section>
+            <div class="header">
+                <h1 class="title">Project</h1>
+                <h2 class="subs">To - Do List</h2>
+            </div>
+        </section>
+    
+        <br><br><br>
+        {% if request.user.username %}
+            <h3> Haii! {{request.user.username}} </h3>
+        {% endif %}
+        
+
+        <section>
+            <div class="badan">
+                <p id="intro"> Apa yang akan kamu lakukan? Tambahkan disini.</p> <br>
+                
+                {% csrf_token %}
+                <input type="text" id="add_text" placeholder="Tambah tugas...">
+                <button onclick="add()" class="btn btn-primary">Add Text</button>
+
+
+                <ul id="list_todo">
+
+                </ul>
+                <button onclick="saveToDatabase()" class="btn btn-success">Save</button>
+                <br><br>
+                <hr>
+                <br>
+                <a href="{% url 'myList' %}" class="btn btn-secondary">Show my List</a>
+
+            </div>
+        </section>
+
+        <script src="{% static 'css/javascript/isi.js' %}"></script>
+
+        <style>
+            .header{
+                background-color: black;
+                height: 120px;
+                width: 100%;
+            }
+
+            .title{
+                color: yellow;
+                font-size: 30px;
+                font-weight: bold;
+                padding: 12px;
+                text-align: center;
+            }
+
+            .subs{
+                color: white;
+                font-size: 22px;
+                text-align: center;
+            }
+
+            .badan{
+                padding: 33px;
+                width: 45%;
+                margin: 0% auto;
+            }
+
+            h3{
+                width: 45%;
+                margin: 0% auto;
+                font-size: 20px;
+            }
+
+            .done{
+                text-decoration: line-through;
+            }
+
+            .selesai{
+                text-decoration: line-through;
+            }
+
+            #list_todo{
+                padding: 23px;
+            }
+        </style>
+    </body>
+{% endblock %}
