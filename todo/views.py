@@ -36,26 +36,6 @@ def todo_list(request):
     todo_items = TodoItem.objects.all()
     return render(request, 'isi.html', {'todo_items': todo_items})
 
-
-# Untuk menampilkan to-do list
-@login_required
-def myList(request):
-    # Tampilan website, mengambil data dari database
-    if request.method == 'GET':
-        task = TodoItem.objects.all().values('id', 'task', 'completed')
-        return render(request, 'myList.html', {'task': task})
-    # Mendapatkan Id dari database untuk dihapus
-    elif request.method == 'DELETE':
-        todo_id = request.GET.get('todo_id')
-
-        try:
-            todo_to_delete = TodoItem.objects.get(id=todo_id)
-            todo_to_delete.delete()
-            return JsonResponse({"message": "Data berhasil dihapus"})
-        except TodoItem.DoesNotExist:
-            return JsonResponse({"message": "Data tidak ditemukan"}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
         
         
 # DOWNLOAD FILE PDF
