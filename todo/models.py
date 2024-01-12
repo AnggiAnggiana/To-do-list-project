@@ -39,7 +39,6 @@ class Urgent_todo_list(models.Model):
     
 class Completed_todo_list(models.Model):
     task = models.CharField(max_length=300)
-    completed_at = models.DateTimeField(null=True, blank=True)
     
     # Add the task from urgent_todo_list & Add the task from regular_todo_list
     @classmethod
@@ -56,7 +55,7 @@ class Completed_todo_list(models.Model):
         if current_time.hour == 0 and current_time.minute == 1:
             completed_tasks = cls.objects.all()
             for task in completed_tasks:
-                Regular_todo_list.objects.create(task=task)
+                Regular_todo_list.objects.create(task=task.task)
                 task.delete()
         
     def delete_task(self):

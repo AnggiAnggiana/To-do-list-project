@@ -4,8 +4,6 @@ from .models import TodoItem
 from django.http import JsonResponse
 # from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
-# Yg bawah dari tutorial ytube
-# from django.views import View
 
 # Untuk download file pdf
 # Install di command prompt: pip install reportlab django
@@ -17,24 +15,43 @@ from reportlab.lib.pagesizes import letter
 from django.http import HttpResponse
 
 
+from .forms import Regular_todoForm
+from .forms import Urgent_todoForm
+from .forms import Completed_todoForm
+from django.urls import reverse
+
+
 def handler404(request, exception):
     return render(request, '404.html', status=404)
 
-# Untuk menambahkan list
+
+# Add todo_list
 @login_required
 def todo_list(request):
-    if request.method == 'POST':
-        task = request.POST.getlist('task[]')
-        for task in task:
-            TodoItem.objects.create(task=task)
-        return JsonResponse({'message': 'Task berhasil ditambahkan'})
-    
-    elif request.method == 'GET':
-        task = TodoItem.objects.all().values('id', 'task', 'completed')
-        return render(request, 'isi.html', {'task': task})
-
-    todo_items = TodoItem.objects.all()
-    return render(request, 'isi.html', {'todo_items': todo_items})
+    submitted = False
+    if request.method == "POST":
+        regular_form = Regular_todoForm(request.POST)
+        urgent_form = Urgent_todoForm(request.POST)
+        
+        if regular_form.is_valid():
+            regular_form.save()
+            return redirect(reverse('todo_list') + '?submitted=True')
+        
+        if urgent_form.is_valid():
+            urgent_form.save()
+            return redirect(reverse('todo_list') + '?submitted=True')
+    else:
+        regular_form = Regular_todoForm()
+        urgent_form = Urgent_todoForm()
+        
+        if 'submitted' in request.GET:
+            submitted = True
+            
+    return render(request, 'todo/myTodo.html', {
+        'regular_form': regular_form,
+        'urgent_form': urgent_form,
+        'submitted': submitted
+    })
 
         
         
