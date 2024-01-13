@@ -58,35 +58,62 @@
             </div>
             <br><br>
             <div class="show_result">
-                <div class="result_card">
+                <div class="result_card_regular">
                     <div class="card">
                         <div class="card-body">
                             <div class="mid-element">
                                 <h2 class="card-title">Regular Todo List</h2>
                             </div>
+                            <br>
                             {% for frequency, tasks in regular_task_group.items %}
                                 <h4 class="card-text"> {{ frequency }} </h4>
                                 {% for regular in tasks %}
-                                    <li class="card-text"> {{ regular.task }} </li>
-                                {% endfor %}<br>
+                                    <div class="task-container">
+                                        <span class="task-text"> {{ regular.task }} </span>
+                                        <input type="checkbox" class="completed-form" {% if regular.completed %}checked{% endif %}></input>
+                                    </div>
+                                {% endfor %}
+                                <br>
                             {% endfor %}
                             <div class="mid-element">
-                                <a href="#" class="btn btn-success">Save</a>
+                                <button type="submit" class="btn btn-success">Save</button>
                             </div>
                         </div>
                     </div>
+                </div>
+                <br>
+                <div class="result_card_urgent">
                     <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Important Todo List</h5>
+                        <div class="card-size">
+                            <div class="mid-element">
+                                <h2 class="card-title">Important Todo List</h2>
+                            </div>
+                            <br>
                             {% for important in important_task %}
-                                <p class="card-text"> {{ important.task }} </p>
+                                <div class="task-container">
+                                    <div class="task-info">
+                                        <div class="title-container">
+                                            <h4 class="task-title">Task</h4>
+                                            <h4 class="task-title">Deadline</h4>
+                                        </div>
+                                        <div class="content-container">
+                                            <span class="task-urgent">{{ important.task }}</span>
+                                            <span class="task-urgent">{{ important.due_date }}</span>
+                                            <span class="task-urgent">timerr</span>
+                                            <input type="checkbox" class="completed-form" {% if important.completed %}checked{% endif %}></input>
+                                        </div>
+                                    </div>
+                                </div>
                             {% endfor %}<br>
-                            <a href="#" class="btn btn-success">Save</a>
+                            <div class="mid-element">
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+        <br>
 
         <script src="{% static 'css/javascript/isi.js' %}"></script>
 
@@ -122,7 +149,13 @@
             }
             
 
-            .result_card {
+            .result_card_regular {
+                margin-left: 75px;
+                width: 35%;
+                display: flex;
+            }
+
+            .result_card_urgent {
                 margin-left: 75px;
                 width: 85%;
                 display: flex;
@@ -164,6 +197,47 @@
 
             .mid-element {
                 text-align: center;
+            }
+
+            .task-container {
+                display: flex;
+                margin-bottom: 5px;
+            }
+
+            .task-text {
+                flex-grow: 1;
+                margin-right: 10px;
+            }
+
+            .completed-form {
+                border-radius: 50px;
+                margin-right: 30px;
+                width: 20px;
+                height: 20px;
+                display: inline-block;
+            }
+
+            .title-container {
+                display: flex;
+                align-items: center;
+                margin-bottom: 5px;
+            }
+
+            .content-container {
+                display: flex;
+                align-items: center;
+                margin-bottom: 5px;
+            }
+
+            .task-title {
+                margin-right: 105px;
+                margin-left: 20px;
+            }
+
+            .task-urgent {
+                border-radius: 50px;
+                margin-right: 80px;
+                margin-left: 20px;
             }
         </style>
     </body>
