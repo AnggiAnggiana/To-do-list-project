@@ -73,10 +73,10 @@ WSGI_APPLICATION = 'project_todo.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE'),
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'todo_list_project',
+        'USER': 'root',
+        'PASSWORD': 'databeskunich00',
     }
 }
 

@@ -9,8 +9,8 @@ class Regular_todoForm(ModelForm):
         model = Regular_todo_list
         fields = ('task', 'frequency', 'completed')
         labels = {
-            'task': 'Regular Todo List',
-            'frequency': 'Type',
+            'task': '',
+            'frequency': '',
             'completed': '',
         }
         
@@ -28,7 +28,7 @@ class Urgent_todoForm(ModelForm):
         model = Urgent_todo_list
         fields = (('task', 'due_date', 'completed'))
         labels = {
-            'task': 'Urgent Todo List',
+            'task': '',
             'due_date': 'Deadline',
             'completed': '',
         }
@@ -36,7 +36,7 @@ class Urgent_todoForm(ModelForm):
         # Styling form
         widgets = {
             'task': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Type your task here'}),
-            'due_date': forms.DateTimeInput(attrs={'class': 'form-control', 'placeholder': 'Select deadline'}),
+            'due_date': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local', 'placeholder': 'Select deadline'}),
             'completed': forms.CheckboxInput(attrs={'class': 'btn btn-success', 'input_type': 'button'}),
         }
         

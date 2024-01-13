@@ -1,4 +1,4 @@
-"TO DO LIST" PROJECT.
+"TO DO LIST" PROJECT (ON PROGRESS).
 HOW TO USE:
 1. This project use django as the framework of the project.
 2. Clone this project
