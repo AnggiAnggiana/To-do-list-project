@@ -82,7 +82,7 @@
                     </div>
                 </div>
                 <br>
-                <div class="result_card_urgent">
+                <div class="result_card_urgent" id="importantTaskDeadline">
                     <div class="card">
                         <div class="card-size">
                             <div class="mid-element">
@@ -115,7 +115,17 @@
         </section>
         <br>
 
-        <script src="{% static 'css/javascript/isi.js' %}"></script>
+        <script src="{% static 'js/deadline_timer.js' %}"></script>
+        <script>
+            const importantTaskProps = {
+                task: '{{ important.task }}',
+                dueDate: '{{ important.due_date }}',
+                completed: '{{ important.completed }}',
+            }
+
+            const root = createRoot(document.getElementById('importantTaskDeadline'))
+            root.render(React.createElement(ImportantTask, importantTaskProps))
+        </script>
 
         <style>
             .header{
