@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
-import { createRoot } from 'react-dom'
-// import  ImportantTask from './static/js/deadline_timer.js'
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { createRoot } from 'react-dom/client';
 
 const ImportantTask = ({ task, dueDate, completed }) => {
     const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining(dueDate))
@@ -60,8 +59,17 @@ const ImportantTask = ({ task, dueDate, completed }) => {
 ImportantTask.propTypes = {
     task: PropTypes.string.isRequired,
     dueDate: PropTypes.string.isRequired,
-    completed: PropTypes.bool.isRequired
+    completed: PropTypes.string.isRequired,
 }
+
+const importantTaskProps = {
+    task: '{{ important.task }}',
+    dueDate: '{{ important.due_date }}',
+    completed: '{{ important.completed }}',
+}
+
+const root = createRoot(document.getElementById('importantTaskDeadline'))
+root.render(<ImportantTask {...importantTaskProps} />)
 
 
 export default ImportantTask
