@@ -2,16 +2,7 @@
 {% load static %}
 
 
-{% block scripts %}
-    <script src="{% static 'js/deadline-timer.js' %}"></script>
-{% endblock %}
-
-
-{% block content %}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'js/bundle.js' %}"></script>
-    
-    
+{% block content %}    
     <body>
         <section>
             <div class="header">
@@ -97,20 +88,25 @@
                                 <h2 class="card-title">Important Todo List</h2>
                             </div>
                             <br>
-                            {% for important in important_task %}
+                            {% for task, tasks in important_task_group.items %}
                                 <div class="task-container">
                                     <div class="task-info">
-                                        <div class="title-container">
-                                            <h4 class="task-title">Task</h4>
-                                            <h4 class="task-title">Deadline</h4>
-                                        </div>
-                                        <div class="content-container">
-                                            <div class="task-urgent">{{ important.task }}</div>
-                                            <div id="deadline">{{ important.due_date }}</div>
-                                            <div id="importantTaskDeadline"></div>
-                                            <span class="task-urgent">timerr</span>
-                                            <input type="checkbox" class="completed-form" {% if important.completed %}checked{% endif %}></input>
-                                        </div>
+                                        {% if forloop.first %}
+                                            <div class="title-container">
+                                                <h4 class="task-title">Task</h4>
+                                                <h4 class="task-title">Deadline</h4>
+                                                <h4 class="task-title-time">Time left</h4>
+                                                <h4 class="task-title">Status</h4>
+                                            </div>
+                                        {% endif %}
+                                        {% for important in tasks %}
+                                            <div class="content-container">
+                                                <div class="task-urgent">{{ important.task }}</div>
+                                                <div id="deadline" class="task-urgent">{{ important.due_date|date:"M d, Y H:m:s" }}</div>
+                                                <div id="importantTaskDeadline" class="task-urgent-time"></div>
+                                                <input type="checkbox" class="completed-form" {% if important.completed %}checked{% endif %}></input>
+                                            </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
                             {% endfor %}<br>
@@ -124,9 +120,9 @@
             </div>
         </section>
         <br>
-        <script type="text/babel" src="{% static 'deadline_timer.js' %}"></script>
 
 
+        <script src="{% static 'js/deadline-timer.js' %}"></script>
         <style>
             .header{
                 background-color: black;
@@ -172,7 +168,7 @@
             }
 
             .card {
-                margin-right: 50px;
+                margin-right: 30px;
                 width: 90%;
             }
 
@@ -240,15 +236,27 @@
             }
 
             .task-title {
-                margin-right: 105px;
-                margin-left: 20px;
+                margin-right: 85px;
+                margin-left: 30px;
             }
 
             .task-urgent {
                 border-radius: 50px;
                 margin-right: 80px;
+                margin-left: 30px;
+            }
+
+            .task-title-time {
+                margin-right: 105px;
+                margin-left: 70px;
+            }
+
+            .task-urgent-time {
+                border-radius: 50px;
+                margin-right: 100px;
                 margin-left: 20px;
             }
+
         </style>
         
     </body>
