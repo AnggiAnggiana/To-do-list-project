@@ -68,6 +68,7 @@
                                 <h4 class="card-text"> {{ frequency }} </h4>
                                 {% for regular in tasks %}
                                     <div class="task-container">
+                                        <div class="task-text">{{ forloop.counter }}</div>
                                         <span class="task-text"> {{ regular.task }} </span>
                                         <input type="checkbox" class="completed-form" {% if regular.completed %}checked{% endif %}></input>
                                     </div>
@@ -89,27 +90,29 @@
                             </div>
                             <br>
                             {% for task, tasks in important_task_group.items %}
-                                <div class="task-container">
-                                    <div class="task-info">
-                                        {% if forloop.first %}
-                                            <div class="title-container">
-                                                <h4 class="task-title">Task</h4>
-                                                <h4 class="task-title">Deadline</h4>
-                                                <h4 class="task-title-time">Time left</h4>
-                                                <h4 class="task-title">Status</h4>
-                                            </div>
-                                        {% endif %}
-                                        {% for important in tasks %}
-                                            <div class="content-container">
-                                                <div class="task-urgent">{{ important.task }}</div>
-                                                <div id="deadline" class="task-urgent">{{ important.due_date|date:"M d, Y H:m:s" }}</div>
-                                                <div id="importantTaskDeadline" class="task-urgent-time"></div>
-                                                <input type="checkbox" class="completed-form" {% if important.completed %}checked{% endif %}></input>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            {% endfor %}<br>
+                                <table class="table table-columns table-hover lebar">
+                                    {% if forloop.first %}
+                                        <thead class="table-dark">
+                                                <tr>
+                                                    <td class="task-size">Task</td>
+                                                    <td class="deadline-size">Deadline<br></td>
+                                                    <td class="remain-time-size">Time left</td>
+                                                    <td class="status-size">Completed</td>
+                                                </tr>
+                                        </thead>
+                                    {% endif %}
+                                    {% for important in tasks %}
+                                        <tbody class="table-dark urgent">
+                                            <tr>
+                                                <td class="task">{{ important.task }}</td>
+                                                <td id="deadline" class="deadline">{{ important.due_date|date:"d F Y H:i" }}</td>
+                                                <td id="importantTaskDeadline" class="remain-time"></td>
+                                                <td><input type="checkbox" class="completed-form status" {% if important.completed %}checked{% endif %}></input></td>
+                                            </tr>
+                                        </tbody>
+                                    {% endfor %}
+                                </table>
+                            {% endfor %}
                             <div class="mid-element">
                                 <button type="submit" class="btn btn-success">Save</button>
                             </div>
@@ -169,11 +172,24 @@
 
             .card {
                 margin-right: 30px;
-                width: 90%;
+                width: 911px;
+                background-color: #212529;
+            }
+
+            .card-size {
+                margin: 0px;
+            }
+
+            .card-title {
+                color: rgba(219, 43, 43, 0.808);
+            }
+
+            .card-text {
+                color: rgba(252, 167, 8, 0.603)
             }
 
             .hi_user {
-                color: white;
+                color: rgb(255, 255, 255);
                 padding-top: 20px;
                 transform: translateX(-160px) translateY(-80px);
                 font-weight: 400;
@@ -207,57 +223,66 @@
 
             .task-container {
                 display: flex;
-                margin-bottom: 5px;
+                
             }
 
             .task-text {
                 flex-grow: 1;
                 margin-right: 10px;
+                color: rgba(248, 238, 238, 0.877)
             }
 
             .completed-form {
                 border-radius: 50px;
-                margin-right: 30px;
+                margin-left: 45px;
                 width: 20px;
                 height: 20px;
                 display: inline-block;
             }
 
-            .title-container {
+            .lebar {
+                width: 910px;
+                margin-top: -20px;
+            }
+
+            tr {
                 display: flex;
-                align-items: center;
-                margin-bottom: 5px;
+                width: 100%;
             }
 
-            .content-container {
-                display: flex;
-                align-items: center;
-                margin-bottom: 5px;
+            td {
+                flex: 1;
+                border-left: 1px solid white;
+                border-right: 1px solid white;
+                border-top: 1.5px solid white;
+                border-bottom: 1px solid white;
+                padding: 8px;
+                text-align: center;
             }
 
-            .task-title {
-                margin-right: 85px;
-                margin-left: 30px;
+            .task, .task-size {
+                grid-column: 1;
             }
 
-            .task-urgent {
-                border-radius: 50px;
-                margin-right: 80px;
-                margin-left: 30px;
+            .deadline, .deadline-size {
+                grid-column: 2;
             }
 
-            .task-title-time {
-                margin-right: 105px;
-                margin-left: 70px;
+            .remain-time, .remain-time-size {
+                grid-column: 3;
             }
 
-            .task-urgent-time {
-                border-radius: 50px;
-                margin-right: 100px;
-                margin-left: 20px;
+            .status, .status-size {
+                grid-column: 4;
+                width: 20%;
+            }
+
+            td.task-size, td.deadline-size, td.remain-time-size, td.status-size {
+                color: orange;
+                font-weight: bold;
+                font-size: 20px;
             }
 
         </style>
-        
     </body>
 {% endblock %}
