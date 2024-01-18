@@ -15,7 +15,7 @@ document.querySelectorAll('.urgent').forEach(urgent => {
         const seconds = Math.floor((deadlineDate / (1000) - (now / (1000))) % 60)
 
         if (difference < 0) {
-            importantTaskDeadline.innerHTML = "Deadline expired"
+            importantTaskDeadline.innerHTML = "Deadline Expired"
         } else if (difference > 0 && days >= 1) {
             importantTaskDeadline.innerHTML = days + " hari " + hours + " jam " + minutes + " menit " + seconds + " detik "
         } else if (difference > 0 && hours >= 1) {

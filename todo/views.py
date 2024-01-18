@@ -53,8 +53,9 @@ def todo_list(request):
     regular_task = Regular_todo_list.objects.all()
     important_task = Urgent_todo_list.objects.all()
     
-    # Grouping element regular_form by frequncy
+    # Grouping element regular_form by frequncy (regular task)
     regular_task_group = {k: list(g) for k, g in groupby(sorted(regular_task, key=lambda x: x.frequency), key=lambda x: x.frequency)}
+    # Grouping element in important task
     important_task_group = {k: list(g) for k, g in groupby(sorted(important_task, key=lambda x: x.task), key=lambda x: x.task)}
             
     return render(request, 'todo/myTodo.html', {

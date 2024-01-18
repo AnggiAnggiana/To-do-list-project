@@ -61,18 +61,32 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="mid-element">
-                                <h2 class="card-title">Regular Todo List</h2>
+                                <h2 class="card-title-regular">Regular Todo List</h2>
                             </div>
                             <br>
                             {% for frequency, tasks in regular_task_group.items %}
-                                <h4 class="card-text"> {{ frequency }} </h4>
-                                {% for regular in tasks %}
-                                    <div class="task-container">
-                                        <div class="task-text">{{ forloop.counter }}</div>
-                                        <span class="task-text"> {{ regular.task }} </span>
-                                        <input type="checkbox" class="completed-form" {% if regular.completed %}checked{% endif %}></input>
-                                    </div>
-                                {% endfor %}
+                                <table class="table table-columns table-hover reg-list">
+                                    {% if forloop.first %}
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <td class="tipe">Type</td>
+                                                <td class="number">No</td>
+                                                <td class="task-reg">Task</td>
+                                                <td class="status-reg">Completed</td>
+                                            </tr>
+                                        </thead>
+                                    {% endif %}
+                                    {% for regular in tasks %}
+                                        <tbody class="table-dark task-container">
+                                            <tr>
+                                                <td class="card-text">{{ frequency }}</td>
+                                                <td class="nomor">{{ forloop.counter }}</td>
+                                                <td class="task-text"> {{ regular.task }} </td>
+                                                <td><input type="checkbox" class="completed-form-reg" {% if regular.completed %}checked{% endif %}></input></td>
+                                            </tr>
+                                        </tbody>
+                                    {% endfor %}
+                                </table>
                                 <br>
                             {% endfor %}
                             <div class="mid-element">
@@ -86,7 +100,7 @@
                     <div class="card">
                         <div class="card-size">
                             <div class="mid-element">
-                                <h2 class="card-title">Important Todo List</h2>
+                                <h2 class="card-title-important">Important Todo List</h2>
                             </div>
                             <br>
                             {% for task, tasks in important_task_group.items %}
@@ -94,10 +108,10 @@
                                     {% if forloop.first %}
                                         <thead class="table-dark">
                                                 <tr>
-                                                    <td class="task-size">Task</td>
-                                                    <td class="deadline-size">Deadline<br></td>
-                                                    <td class="remain-time-size">Time left</td>
-                                                    <td class="status-size">Completed</td>
+                                                    <td class="task-imp">Task</td>
+                                                    <td class="deadline-imp">Deadline<br></td>
+                                                    <td class="remain-time-imp">Time left</td>
+                                                    <td class="status-imp">Completed</td>
                                                 </tr>
                                         </thead>
                                     {% endif %}
@@ -105,9 +119,9 @@
                                         <tbody class="table-dark urgent">
                                             <tr>
                                                 <td class="task">{{ important.task }}</td>
-                                                <td id="deadline" class="deadline">{{ important.due_date|date:"d F Y H:i" }}</td>
+                                                <td id="deadline" class="deadline">{{ important.due_date|date:"d F Y, H:i" }}</td>
                                                 <td id="importantTaskDeadline" class="remain-time"></td>
-                                                <td><input type="checkbox" class="completed-form status" {% if important.completed %}checked{% endif %}></input></td>
+                                                <td><input type="checkbox" class="btn btn-success completed-form-imp status" {% if important.completed %}checked{% endif %}></input></td>
                                             </tr>
                                         </tbody>
                                     {% endfor %}
@@ -157,10 +171,9 @@
                 margin-right: 50px;
             }
             
-
             .result_card_regular {
                 margin-left: 75px;
-                width: 35%;
+                width: 85%;
                 display: flex;
             }
 
@@ -172,7 +185,7 @@
 
             .card {
                 margin-right: 30px;
-                width: 911px;
+                width: 1109px;
                 background-color: #212529;
             }
 
@@ -180,12 +193,12 @@
                 margin: 0px;
             }
 
-            .card-title {
-                color: rgba(219, 43, 43, 0.808);
+            .card-title-regular {
+                color: rgba(6, 165, 77, 0.932);
             }
 
-            .card-text {
-                color: rgba(252, 167, 8, 0.603)
+            .card-title-important {
+                color: rgba(219, 43, 43, 0.808);
             }
 
             .hi_user {
@@ -226,23 +239,21 @@
                 
             }
 
-            .task-text {
-                flex-grow: 1;
-                margin-right: 10px;
-                color: rgba(248, 238, 238, 0.877)
-            }
-
-            .completed-form {
+            .completed-form-reg, .completed-form-imp {
                 border-radius: 50px;
-                margin-left: 45px;
                 width: 20px;
                 height: 20px;
                 display: inline-block;
             }
 
             .lebar {
-                width: 910px;
+                
                 margin-top: -20px;
+            }
+
+            table {
+                table-layout: fixed;
+                width: 100%;
             }
 
             tr {
@@ -251,7 +262,7 @@
             }
 
             td {
-                flex: 1;
+                
                 border-left: 1px solid white;
                 border-right: 1px solid white;
                 border-top: 1.5px solid white;
@@ -260,27 +271,72 @@
                 text-align: center;
             }
 
-            .task, .task-size {
-                grid-column: 1;
-            }
-
-            .deadline, .deadline-size {
-                grid-column: 2;
-            }
-
-            .remain-time, .remain-time-size {
-                grid-column: 3;
-            }
-
-            .status, .status-size {
-                grid-column: 4;
-                width: 20%;
-            }
-
-            td.task-size, td.deadline-size, td.remain-time-size, td.status-size {
+            td.task-imp, td.deadline-imp, td.remain-time-imp, td.status-imp {
                 color: orange;
                 font-weight: bold;
                 font-size: 20px;
+            }
+
+            td.tipe, td.number, td.task-reg, td.status-reg {
+                color: rgba(9, 151, 247, 0.781);
+                font-weight: bold;
+                font-size: 20px;
+            }
+
+            .tipe, .card-text {
+                width: 99px;
+            }
+
+            .number, .nomor {
+                width: 80px;
+            }
+
+            .task-reg, .task-text {
+                width: 440px;
+            }
+
+            .status-reg {
+                width: 150px;
+            }
+
+            .completed-form-reg {
+                width: 132px;
+            }
+
+            .reg-list {
+                margin-left: 55px;
+            }
+
+            .task-imp {
+                width: 375px;
+            }
+
+            .task {
+                width: 688px;
+            }
+
+            .deadline-imp {
+                width: 232px;
+            }
+
+            .deadline {
+                width: 420px;
+            }
+
+            .remain-time-imp {
+                width: 302px;
+            }
+
+            .remain-time {
+                width: 550px;
+            }
+
+            .status-imp {
+                width: 180px;
+            }
+
+            .completed-form-imp {
+                width: 150px;
             }
 
         </style>
