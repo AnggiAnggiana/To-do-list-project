@@ -72,17 +72,26 @@
                                                 <td class="tipe">Type</td>
                                                 <td class="number">No</td>
                                                 <td class="task-reg">Task</td>
-                                                <td class="status-reg">Completed</td>
+                                                <td class="status-reg">Actions</td>
                                             </tr>
                                         </thead>
                                     {% endif %}
                                     {% for regular in tasks %}
                                         <tbody class="table-dark task-container">
                                             <tr>
-                                                <td class="card-text">{{ frequency }}</td>
+                                                <td class="card-text">{{ regular.frequency }}</td>
                                                 <td class="nomor">{{ forloop.counter }}</td>
                                                 <td class="task-text"> {{ regular.task }} </td>
-                                                <td><input type="checkbox" class="completed-form-reg" {% if regular.completed %}checked{% endif %}></input></td>
+                                                <td colspan="2" class="completed-form-reg">
+                                                    {% if regular_move_to_completed_task %}
+                                                        <button class="btn btn-success button-function comp-reg-btn" name="regular_move_to_completed_task" value="{{ regular.task }}">Done</button>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="delete-form-reg">
+                                                    {% if delete_regular_task %}
+                                                        <button class="btn btn-danger button-function" name="delete_regular_task" value="{{ regular.task }}">Delete</button>
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                         </tbody>
                                     {% endfor %}
@@ -140,6 +149,7 @@
 
 
         <script src="{% static 'js/deadline-timer.js' %}"></script>
+        <script src="{% static 'js/button-function.js' %}"></script>
         <style>
             .header{
                 background-color: black;
@@ -239,7 +249,7 @@
                 
             }
 
-            .completed-form-reg, .completed-form-imp {
+            .completed-form-imp {
                 border-radius: 50px;
                 width: 20px;
                 height: 20px;
@@ -296,11 +306,21 @@
             }
 
             .status-reg {
-                width: 150px;
+                width: 175px;
             }
 
             .completed-form-reg {
-                width: 132px;
+                border-right: none;
+            }
+
+            .comp-reg-btn {
+                width: 70px;
+                height: 40px;
+                border-right: none;
+            }
+
+            .delete-form-reg {
+                border-left: none;
             }
 
             .reg-list {
