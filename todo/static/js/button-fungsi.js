@@ -1,4 +1,3 @@
-console.log('Javascript lancar kok')
 document.querySelectorAll('.button-function').forEach(btn => {
     btn.addEventListener('click', function() {
         const task = this.value
@@ -10,7 +9,7 @@ document.querySelectorAll('.button-function').forEach(btn => {
         // Create a form dinamically
         const form = document.createElement('form')
         form.method = 'post'
-        form.action = '{% url "todo_list" %}'
+        form.action = this.getAttribute('data-url')
         form.style.display = 'none'
 
         // Add task input
@@ -26,11 +25,13 @@ document.querySelectorAll('.button-function').forEach(btn => {
         actionInput.name = action
         form.appendChild(actionInput)
 
+        // Get CSRF token
+        const csrfToken = this.getAttribute('data-csrf')
         // Add CSRF Token input
         const csrfInput = document.createElement('input')
-        csrfInput.type = 'hidden'
+        csrfInput.type = "hidden"
         csrfInput.name = 'csrfmiddlewaretoken'
-        csrfInput.value = '{{ csrf_token }}'
+        csrfInput.value = csrfToken
         form.appendChild(csrfInput)
 
         // Append the form to the document

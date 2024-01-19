@@ -83,14 +83,17 @@
                                                 <td class="nomor">{{ forloop.counter }}</td>
                                                 <td class="task-text"> {{ regular.task }} </td>
                                                 <td colspan="2" class="completed-form-reg">
-                                                    {% if regular_move_to_completed_task %}
-                                                        <button class="btn btn-success button-function comp-reg-btn" name="regular_move_to_completed_task" value="{{ regular.task }}">Done</button>
-                                                    {% endif %}
+                                                    <form method="post" action="{% url 'todo_list' %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="regular_move_to_completed_task" value="{{ regular.task }}">
+                                                        <button class="btn btn-success button-function comp-reg-btn" type="submit" data-url="{% url 'todo_list' %}" data-csrf="{{ csrf_token }}">Done</button>
+                                                    </form>
                                                 </td>
                                                 <td class="delete-form-reg">
-                                                    {% if delete_regular_task %}
-                                                        <button class="btn btn-danger button-function" name="delete_regular_task" value="{{ regular.task }}">Delete</button>
-                                                    {% endif %}
+                                                    <form method="post" action="{% url 'delete_todo' regular.id %}">
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-danger" type="submit">Delete</button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -147,9 +150,9 @@
         </section>
         <br>
 
-
+        <script src="{% static 'js/button-fungsi.js' %}"></script>
         <script src="{% static 'js/deadline-timer.js' %}"></script>
-        <script src="{% static 'js/button-function.js' %}"></script>
+        
         <style>
             .header{
                 background-color: black;

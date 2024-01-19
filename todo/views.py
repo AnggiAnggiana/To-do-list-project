@@ -36,13 +36,11 @@ def todo_list(request):
     regular_form = Regular_todoForm()
     urgent_form = Urgent_todoForm()
     regular_move_to_completed_task = True
-    delete_regular_task = True
     
     if request.method == "POST":
         regular_form = Regular_todoForm(request.POST)
         urgent_form = Urgent_todoForm(request.POST)
         regular_move_to_completed_task = request.POST.get('regular_move_to_completed_task')     # "Done" button function (regular task)
-        delete_regular_task = request.POST.get('delete_regular_task')                           # "Delete" button function (regular task)
         
         if regular_form.is_valid():
             regular_form.save()
@@ -55,18 +53,12 @@ def todo_list(request):
             submitted = True
             
         if regular_move_to_completed_task:
-            task_to_move = regular_move_to_completed_task
-            Completed_todo_list.objects.create(task=task_to_move)
-            Regular_todo_list.objects.filter(task=task_to_move).delete()
+            task_to_move = Regular_todo_list.objects.get(task=regular_move_to_completed_task)
+            Completed_todo_list.objects.create(task=task_to_move.task)
+            task_to_move.delete()
             messages.success(request, 'Congratulations, you successfully completed your task')
             return redirect('todo_list')
         
-        if delete_regular_task:
-            task_to_delete = delete_regular_task
-            Regular_todo_list.objects.filter(task=task_to_delete).delete()
-            messages.success(request, 'Regular task successfully deleted')
-            return redirect('todo_list')
-            
     regular_task = Regular_todo_list.objects.all()
     important_task = Urgent_todo_list.objects.all()
     
@@ -84,8 +76,14 @@ def todo_list(request):
         'regular_task_group': regular_task_group,
         'important_task_group': important_task_group,
         'regular_move_to_completed_task': regular_move_to_completed_task,
-        'delete_regular_task': delete_regular_task,
     })
+    
+@login_required
+def delete_todo(request, todo_id):
+    delete_task = Regular_todo_list.objects.get(pk=todo_id)
+    delete_task.delete()
+    messages.success(request, 'Regular Task successfully deleted')
+    return redirect('todo_list')
     
         
 # DOWNLOAD FILE PDF
