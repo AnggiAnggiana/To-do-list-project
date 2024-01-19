@@ -90,7 +90,7 @@
                                                     </form>
                                                 </td>
                                                 <td class="delete-form-reg">
-                                                    <form method="post" action="{% url 'delete_todo' regular.id %}">
+                                                    <form method="post" action="{% url 'delete_todo' 'regular' regular.id %}">
                                                         {% csrf_token %}
                                                         <button class="btn btn-danger" type="submit">Delete</button>
                                                     </form>
@@ -99,7 +99,6 @@
                                         </tbody>
                                     {% endfor %}
                                 </table>
-                                <br>
                             {% endfor %}
                             <div class="mid-element">
                                 <button type="submit" class="btn btn-success">Save</button>
@@ -123,7 +122,7 @@
                                                     <td class="task-imp">Task</td>
                                                     <td class="deadline-imp">Deadline<br></td>
                                                     <td class="remain-time-imp">Time left</td>
-                                                    <td class="status-imp">Completed</td>
+                                                    <td class="status-imp">Actions</td>
                                                 </tr>
                                         </thead>
                                     {% endif %}
@@ -133,7 +132,19 @@
                                                 <td class="task">{{ important.task }}</td>
                                                 <td id="deadline" class="deadline">{{ important.due_date|date:"d F Y, H:i" }}</td>
                                                 <td id="importantTaskDeadline" class="remain-time"></td>
-                                                <td><input type="checkbox" class="btn btn-success completed-form-imp status" {% if important.completed %}checked{% endif %}></input></td>
+                                                <td colspan="2" class="completed-form-reg">
+                                                    <form method="post" action="{% url 'todo_list' %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="important_move_to_completed_task" value="{{ important.task }}">
+                                                        <button class="btn btn-success button-function comp-reg-btn" type="submit" data-url="{% url 'todo_list' %}" data-csrf="{{ csrf_token }}">Done</button>
+                                                    </form>
+                                                </td>
+                                                <td class="delete-form-reg">
+                                                    <form method="post" action="{% url 'delete_todo' 'important' important.id %}">
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-danger" type="submit">Delete</button>
+                                                    </form>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     {% endfor %}
@@ -145,6 +156,9 @@
                             <br>
                         </div>
                     </div>
+                </div>
+                <br>
+                
                 </div>
             </div>
         </section>
@@ -196,6 +210,12 @@
                 display: flex;
             }
 
+            .result_card_completed {
+                margin-left: 75px;
+                width: 85%;
+                display: flex;
+            }
+
             .card {
                 margin-right: 30px;
                 width: 1109px;
@@ -212,6 +232,10 @@
 
             .card-title-important {
                 color: rgba(219, 43, 43, 0.808);
+            }
+
+            .card-title-completed {
+                color: rgba(5, 171, 236, 0.664);
             }
 
             .hi_user {
@@ -260,7 +284,6 @@
             }
 
             .lebar {
-                
                 margin-top: -20px;
             }
 
@@ -275,7 +298,6 @@
             }
 
             td {
-                
                 border-left: 1px solid white;
                 border-right: 1px solid white;
                 border-top: 1.5px solid white;
@@ -331,7 +353,7 @@
             }
 
             .task-imp {
-                width: 375px;
+                width: 354px;
             }
 
             .task {
@@ -339,7 +361,7 @@
             }
 
             .deadline-imp {
-                width: 232px;
+                width: 220px;
             }
 
             .deadline {
@@ -347,7 +369,7 @@
             }
 
             .remain-time-imp {
-                width: 302px;
+                width: 284px;
             }
 
             .remain-time {
