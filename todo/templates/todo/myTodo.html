@@ -79,7 +79,7 @@
                                     {% for regular in tasks %}
                                         <tbody class="table-dark task-container">
                                             <tr>
-                                                <td class="card-text">{{ regular.frequency }}</td>
+                                                <td class="card-text">{{ frequency }}</td>
                                                 <td class="nomor">{{ forloop.counter }}</td>
                                                 <td class="task-text"> {{ regular.task }} </td>
                                                 <td colspan="2" class="completed-form-reg">
@@ -100,9 +100,6 @@
                                     {% endfor %}
                                 </table>
                             {% endfor %}
-                            <div class="mid-element">
-                                <button type="submit" class="btn btn-success">Save</button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -150,15 +147,77 @@
                                     {% endfor %}
                                 </table>
                             {% endfor %}
-                            <div class="mid-element">
-                                <button type="submit" class="btn btn-success">Save</button>
-                            </div>
                             <br>
                         </div>
                     </div>
                 </div>
                 <br>
-                
+                <div class="result_card_completed">
+                    <div class="card">
+                        <div class="card-size">
+                            <div class="mid-element">
+                                <h2 class="card-title-completed">Completed / History List Todo</h2>
+                            </div>
+                            <br>
+                            {% for regular in completed_regular_tasks %}
+                                <table class="table table-columns table-hover reg-list">
+                                    <thead class="table-dark">
+                                        {% if forloop.first %}
+                                        <tr>
+                                            <td class="todo-tipe">Todo Type</td>
+                                            <td class="frequency-tipe">Frequency</td>
+                                            <td class="number">No</td>
+                                            <td class="task-reg">Task</td>
+                                            <td class="status-reg">Actions</td>
+                                        </tr>
+                                        {% endif %}
+                                    </thead>
+                                    <tbody class="table-dark task-container">
+                                        <tr>
+                                            <td class="card-text">{{ regular.task_types }}</td>
+                                            <td class="card-text">{{ regular.frequency }}</td>
+                                            <td class="nomor">{{ forloop.counter }}</td>
+                                            <td class="task-text"> {{ regular.task }} </td>
+                                            <td class="delete-form-reg">
+                                                <form method="post" action="{% url 'delete_todo' 'regular' regular.id %}">
+                                                    {% csrf_token %}
+                                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            {% endfor %}
+                            <br>
+                            {% for important in completed_important_tasks %}
+                                <table class="table table-columns table-hover lebar">
+                                    <thead class="table-dark">
+                                        {% if forloop.first %}
+                                            <tr>
+                                                <td class="task-imp">Task</td>
+                                                <td class="deadline-imp">Deadline<br></td>
+                                                <td class="remain-time-imp">Time left</td>
+                                                <td class="status-imp">Actions</td>
+                                            </tr>
+                                        {% endif %}
+                                    </thead>
+                                    <tbody class="table-dark urgent">
+                                        <tr>
+                                            <td class="card-text">{{ urgent.task_types }}</td>
+                                            <td class="nomor">{{ forloop.counter }}</td>
+                                            <td class="task-text">{{ urgent.task }}</td>
+                                            <td class="delete-form-reg">
+                                                <form method="post" action="{% url 'delete_todo' 'important' important.id %}">
+                                                    {% csrf_token %}
+                                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -382,6 +441,16 @@
 
             .completed-form-imp {
                 width: 150px;
+            }
+
+            .todo-tipe, .frequency-tipe {
+                width: 120px;
+            }
+
+            td.todo-tipe, td.frequency-tipe {
+                color: rgba(223, 9, 133, 0.781);
+                font-weight: bold;
+                font-size: 20px;
             }
 
         </style>

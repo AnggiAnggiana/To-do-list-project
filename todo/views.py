@@ -56,7 +56,7 @@ def todo_list(request):
             
         if regular_move_to_completed_task:
             reg_task_to_move = Regular_todo_list.objects.get(task=regular_move_to_completed_task)
-            Completed_todo_list.objects.create(task=reg_task_to_move.task)
+            Completed_todo_list.move_task(regular_todo=reg_task_to_move)
             reg_task_to_move.delete()
             messages.success(request, 'Congratulations, you successfully completed your regular task')
             return redirect('todo_list')
@@ -70,13 +70,16 @@ def todo_list(request):
         
     regular_task = Regular_todo_list.objects.all()
     important_task = Urgent_todo_list.objects.all()
-    completed_task = Completed_todo_list.objects.all()
     
     # Grouping element regular_form by frequncy (regular task)
     regular_task_group = {k: list(g) for k, g in groupby(sorted(regular_task, key=lambda x: x.frequency), key=lambda x: x.frequency)}
     # Grouping element in important task
     important_task_group = {k: list(g) for k, g in groupby(sorted(important_task, key=lambda x: x.task), key=lambda x: x.task)}
             
+    # Get completed tasks of 'Regular' and 'Urgent' separately
+    completed_regular_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.REGULAR)
+    completed_important_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.URGENT)
+    
     return render(request, 'todo/myTodo.html', {
         'regular_form': regular_form,
         'urgent_form': urgent_form,
@@ -87,7 +90,8 @@ def todo_list(request):
         'important_task_group': important_task_group,
         'regular_move_to_completed_task': regular_move_to_completed_task,
         'important_move_to_completed_task': important_move_to_completed_task,
-        'completed_task': completed_task,
+        'completed_regular_tasks': completed_regular_tasks,
+        'completed_important_tasks': completed_important_tasks,
     })
     
 @login_required
