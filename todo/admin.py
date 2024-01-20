@@ -5,4 +5,4 @@ from .models import Completed_todo_list
 
 admin.site.register(Regular_todo_list, list_display=['task', 'completed'])
 admin.site.register(Urgent_todo_list, list_display=['task', 'due_date', 'completed'])
-admin.site.register(Completed_todo_list, list_display=['task_types','frequency', 'task'])
+admin.site.register(Completed_todo_list, list_display=['task_types','frequency', 'task', 'due_date'])

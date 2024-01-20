@@ -18,9 +18,6 @@ class Regular_todo_list(models.Model):
     def __str__(self):
         return self.task
     
-    def delete_task(self):
-        self.delete()
-    
 class Urgent_todo_list(models.Model):
     task = models.CharField(max_length=300)
     due_date = models.DateTimeField()
@@ -34,9 +31,6 @@ class Urgent_todo_list(models.Model):
     def __str__(self):
         return self.task
     
-    def delete_task(self):
-        self.delete()
-    
 class Completed_todo_list(models.Model):
     REGULAR = 'Regular'
     URGENT= 'Important'
@@ -48,12 +42,13 @@ class Completed_todo_list(models.Model):
     task = models.CharField(max_length=300)
     task_types = models.CharField(max_length=50, choices=TASK_TYPES_CHOICES, null=True, blank=True)
     frequency = models.CharField(max_length=50, choices=Regular_todo_list.FREQUENCY_LEVEL, null=True, blank=True)
+    due_date = models.DateTimeField(null=True, blank=True)
     
     # Add the task from urgent_todo_list & Add the task from regular_todo_list
     @classmethod
     def move_task(cls, urgent_todo=None, regular_todo=None):        #cls = class
         if urgent_todo:
-            cls.objects.create(task=urgent_todo.task, task_types=cls.URGENT)
+            cls.objects.create(task=urgent_todo.task, task_types=cls.URGENT, due_date=urgent_todo.due_date)
         elif regular_todo:
             cls.objects.create(task=regular_todo.task, task_types=cls.REGULAR, frequency=regular_todo.frequency)
     
@@ -66,10 +61,7 @@ class Completed_todo_list(models.Model):
             for task in completed_tasks:
                 Regular_todo_list.objects.create(task=task.task)
                 task.delete()
-        
-    def delete_task(self):
-        self.delete()
-        
+            
     def __str__(self):
         return self.task
 

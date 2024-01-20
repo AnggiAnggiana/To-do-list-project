@@ -63,7 +63,7 @@ def todo_list(request):
         
         if important_move_to_completed_task:
             imp_task_to_move = Urgent_todo_list.objects.get(task=important_move_to_completed_task)
-            Completed_todo_list.objects.create(task=imp_task_to_move.task)
+            Completed_todo_list.move_task(urgent_todo=imp_task_to_move)
             imp_task_to_move.delete()
             messages.success(request, 'Congratulations, you successfully completed your important task')
             return redirect('todo_list')
@@ -97,17 +97,19 @@ def todo_list(request):
 @login_required
 def delete_todo(request, task_type, todo_id):
     if task_type == 'regular':
-        delete_task = Regular_todo_list.objects.get(pk=todo_id)
+        todo_model = Regular_todo_list
     elif task_type == 'important':
-        delete_task = Urgent_todo_list.objects.get(pk=todo_id)
+        todo_model = Urgent_todo_list
+    elif task_type == 'completed':
+        todo_model = Completed_todo_list
     else:
         pass
     
+    delete_task = get_object_or_404(todo_model, pk=todo_id)
     delete_task.delete()
     messages.success(request, 'Task successfully deleted')
     return redirect('todo_list')
 
-    
         
 # DOWNLOAD FILE PDF
 @login_required
