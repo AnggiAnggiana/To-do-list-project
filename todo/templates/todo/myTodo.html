@@ -1,8 +1,10 @@
 {% extends 'layout.html' %}
 {% load static %}
 
+{% block content %}
 
-{% block content %}    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
     <body>
         <section>
             <div class="header">
@@ -25,208 +27,236 @@
                 {% endfor %}
             {% endif %}
         {% endif %}
-        <br>
         <section>
-            <div class="badan">
-                <form action="" class="form-control" method="POST">
-                    <h3>Add Regular Todo List</h3><br>
-                    {% csrf_token %}
-                    {{ regular_form.task }}<br>
-                    <label for="{{ regular_form.frequency.id_for_label }}">Type:</label>
-                    <select class="form-select" name="{{ regular_form.frequency.name }}">
-                        {% for frequency, frequency_label in regular_form.fields.frequency.choices %}
-                            <option value="{{ frequency }}" {% if frequency == regular_form.instance.frequency %}selected{% endif %}>{{ frequency_label }}</option>
-                        {% endfor %}
-                    </select><br>
-                    <div class="btn-pos">
-                        <button type="submit" class="btn btn-primary md">Add</button>
-                    </div>
-                </form>
-
-                <br>
-                <form action="" class="form-control" method="POST">
-                    <h3>Add Urgent Todo List</h3><br>
-                    {% csrf_token %}
-                    {{ urgent_form.task }}<br>
-                    <label for="{{ urgent_form.due_date.id_for_label }}">Deadline:</label>
-                    {{ urgent_form.due_date }}<br>
-                    <div class="btn-pos">
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </div>
-                </form>
-            </div>
-            <br><br>
-            <div class="show_result">
-                <div class="result_card_regular">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mid-element">
-                                <h2 class="card-title-regular">Regular Todo List</h2>
+            <div class="whole-body">
+                <div class="badan">
+                    <div class="modal" id="addRegularTodoModal" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title">Add Regular Todo List</h3>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addRegularTodoForm" action="" class="form-control" method="POST">
+                                        {% csrf_token %}
+                                        {{ regular_form.task }}<br>
+                                        <label for="{{ regular_form.frequency.id_for_label }}">Type:</label>
+                                        <select class="form-select" name="{{ regular_form.frequency.name }}">
+                                            {% for frequency, frequency_label in regular_form.fields.frequency.choices %}
+                                                <option value="{{ frequency }}" {% if frequency == regular_form.instance.frequency %}selected{% endif %}>{{ frequency_label }}</option>
+                                            {% endfor %}
+                                        </select><br>
+                                        <div class="btn-pos">
+                                            <button type="submit" class="btn btn-primary md">Add</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                            <br>
-                            {% for frequency, tasks in regular_task_group.items %}
-                                <table class="table table-columns table-hover reg-list">
-                                    {% if forloop.first %}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="modal" id="addImportantTodoModal" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title">Add Important Todo List</h3>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addImportantTodoForm" action="" class="form-control" method="POST">
+                                        {% csrf_token %}
+                                        {{ urgent_form.task }}<br>
+                                        <label for="{{ urgent_form.due_date.id_for_label }}">Deadline:</label>
+                                        {{ urgent_form.due_date }}<br>
+                                        <div class="btn-pos">
+                                            <button type="submit" class="btn btn-primary">Add</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="show_result">
+                    <div class="result_card_regular">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mid-element">
+                                    <h2 class="card-title-regular">Regular Todo List</h2>
+                                </div>
+                                <br>
+                                {% for frequency, tasks in regular_task_group.items %}
+                                    <table class="table table-columns table-hover reg-list">
+                                        {% if forloop.first %}
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <td class="tipe">Type</td>
+                                                    <td class="number">No</td>
+                                                    <td class="task-reg">Task</td>
+                                                    <td class="status-reg">Actions</td>
+                                                </tr>
+                                            </thead>
+                                        {% endif %}
+                                        {% for regular in tasks %}
+                                            <tbody class="table-dark task-container">
+                                                <tr>
+                                                    <td class="card-text">{{ frequency }}</td>
+                                                    <td class="nomor">{{ forloop.counter }}</td>
+                                                    <td class="task-text"> {{ regular.task }} </td>
+                                                    <td colspan="2" class="completed-form-reg">
+                                                        <form method="post" action="{% url 'todo_list' %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="regular_move_to_completed_task" value="{{ regular.task }}">
+                                                            <button class="btn btn-success button-function comp-reg-btn" type="submit" data-url="{% url 'todo_list' %}" data-csrf="{{ csrf_token }}">Done</button>
+                                                        </form>
+                                                    </td>
+                                                    <td class="delete-form-reg">
+                                                        <form method="post" action="{% url 'delete_todo' 'regular' regular.id %}">
+                                                            {% csrf_token %}
+                                                            <button class="btn btn-danger" type="submit">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        {% endfor %}
+                                    </table>
+                                {% endfor %}
+                                <div class="add-btn-position">
+                                    <button class="btn btn-outline-primary" id="addRegularTodoBtn">Add Regular Todo List</button>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="result_card_urgent">
+                        <div class="card">
+                            <div class="card-size">
+                                <div class="mid-element">
+                                    <h2 class="card-title-important">Important Todo List</h2>
+                                </div>
+                                <br>
+                                {% for task, tasks in important_task_group.items %}
+                                    <table class="table table-columns table-hover lebar">
+                                        {% if forloop.first %}
+                                            <thead class="table-dark">
+                                                    <tr>
+                                                        <td class="task-imp">Task</td>
+                                                        <td class="deadline-imp">Deadline</td>
+                                                        <td class="remain-time-imp">Time left</td>
+                                                        <td class="status-imp">Actions</td>
+                                                    </tr>
+                                            </thead>
+                                        {% endif %}
+                                        {% for important in tasks %}
+                                            <tbody class="table-dark urgent">
+                                                <tr>
+                                                    <td class="task">{{ important.task }}</td>
+                                                    <td id="deadline" class="deadline">{{ important.due_date|date:"d F Y, H:i" }}</td>
+                                                    <td id="importantTaskDeadline" class="remain-time"></td>
+                                                    <td colspan="2" class="completed-form-reg">
+                                                        <form method="post" action="{% url 'todo_list' %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="important_move_to_completed_task" value="{{ important.task }}">
+                                                            <button class="btn btn-success button-function comp-reg-btn" type="submit" data-url="{% url 'todo_list' %}" data-csrf="{{ csrf_token }}">Done</button>
+                                                        </form>
+                                                    </td>
+                                                    <td class="delete-form-reg">
+                                                        <form method="post" action="{% url 'delete_todo' 'important' important.id %}">
+                                                            {% csrf_token %}
+                                                            <button class="btn btn-danger" type="submit">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        {% endfor %}
+                                    </table>
+                                {% endfor %}
+                                <div class="add-btn-position">
+                                    <button class="btn btn-outline-primary" id="addImportantTodoBtn">Add Important Todo List</button>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="result_card_completed">
+                        <div class="card">
+                            <div class="card-size">
+                                <div class="mid-element">
+                                    <h2 class="card-title-completed">Completed / History List Todo</h2>
+                                </div>
+                                <br>
+                                {% for regular in completed_regular_tasks %}
+                                    <table class="table table-columns table-hover lebar comp-table">
                                         <thead class="table-dark">
+                                            {% if forloop.first %}
                                             <tr>
-                                                <td class="tipe">Type</td>
-                                                <td class="number">No</td>
-                                                <td class="task-reg">Task</td>
-                                                <td class="status-reg">Actions</td>
+                                                <td class="todo-tipe-reg">Todo Type</td>
+                                                <td class="number-reg">No</td>
+                                                <td class="task-comp-reg">Task</td>
+                                                <td class="frequency-reg">Frequency</td>
+                                                <td class="action-reg">Actions</td>
                                             </tr>
+                                            {% endif %}
                                         </thead>
-                                    {% endif %}
-                                    {% for regular in tasks %}
                                         <tbody class="table-dark task-container">
                                             <tr>
-                                                <td class="card-text">{{ frequency }}</td>
-                                                <td class="nomor">{{ forloop.counter }}</td>
-                                                <td class="task-text"> {{ regular.task }} </td>
-                                                <td colspan="2" class="completed-form-reg">
-                                                    <form method="post" action="{% url 'todo_list' %}">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="regular_move_to_completed_task" value="{{ regular.task }}">
-                                                        <button class="btn btn-success button-function comp-reg-btn" type="submit" data-url="{% url 'todo_list' %}" data-csrf="{{ csrf_token }}">Done</button>
-                                                    </form>
-                                                </td>
-                                                <td class="delete-form-reg">
-                                                    <form method="post" action="{% url 'delete_todo' 'regular' regular.id %}">
+                                                <td class="tipe-reg">{{ regular.task_types }}</td>
+                                                <td class="nomor-reg">{{ forloop.counter }}</td>
+                                                <td class="comp-task-reg"> {{ regular.task }} </td>
+                                                <td class="comp-frequency-reg">{{ regular.frequency }}</td>
+                                                <td class="action-reg">
+                                                    <form method="post" action="{% url 'delete_todo' 'completed' regular.id %}">
                                                         {% csrf_token %}
                                                         <button class="btn btn-danger" type="submit">Delete</button>
                                                     </form>
                                                 </td>
                                             </tr>
                                         </tbody>
-                                    {% endfor %}
-                                </table>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <div class="result_card_urgent">
-                    <div class="card">
-                        <div class="card-size">
-                            <div class="mid-element">
-                                <h2 class="card-title-important">Important Todo List</h2>
-                            </div>
-                            <br>
-                            {% for task, tasks in important_task_group.items %}
-                                <table class="table table-columns table-hover lebar">
-                                    {% if forloop.first %}
+                                    </table>
+                                {% endfor %}
+                                <br>
+                                {% for important in completed_important_tasks %}
+                                    <table class="table table-columns table-hover lebar comp-table">
                                         <thead class="table-dark">
+                                            {% if forloop.first %}
                                                 <tr>
-                                                    <td class="task-imp">Task</td>
-                                                    <td class="deadline-imp">Deadline</td>
-                                                    <td class="remain-time-imp">Time left</td>
-                                                    <td class="status-imp">Actions</td>
+                                                    <td class="todo-tipe-imp">Todo Type</td>
+                                                    <td class="number-imp">No</td>
+                                                    <td class="task-comp-imp">Task</td>
+                                                    <td class="comp-imp-deadline">Deadline<br></td>
+                                                    <td class="action-imp">Actions</td>
                                                 </tr>
+                                            {% endif %}
                                         </thead>
-                                    {% endif %}
-                                    {% for important in tasks %}
                                         <tbody class="table-dark urgent">
                                             <tr>
-                                                <td class="task">{{ important.task }}</td>
-                                                <td id="deadline" class="deadline">{{ important.due_date|date:"d F Y, H:i" }}</td>
-                                                <td id="importantTaskDeadline" class="remain-time"></td>
-                                                <td colspan="2" class="completed-form-reg">
-                                                    <form method="post" action="{% url 'todo_list' %}">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="important_move_to_completed_task" value="{{ important.task }}">
-                                                        <button class="btn btn-success button-function comp-reg-btn" type="submit" data-url="{% url 'todo_list' %}" data-csrf="{{ csrf_token }}">Done</button>
-                                                    </form>
-                                                </td>
-                                                <td class="delete-form-reg">
-                                                    <form method="post" action="{% url 'delete_todo' 'important' important.id %}">
+                                                <td class="tipe-imp">{{ important.task_types }}</td>
+                                                <td class="nomor-imp">{{ forloop.counter }}</td>
+                                                <td class="comp-task-imp">{{ important.task }}</td>
+                                                <td class="comp-deadline-imp">{{ important.due_date|date:"d F Y, H:i" }}</td>
+                                                <td class="action-imp">
+                                                    <form method="post" action="{% url 'delete_todo' 'completed' important.id %}">
                                                         {% csrf_token %}
                                                         <button class="btn btn-danger" type="submit">Delete</button>
                                                     </form>
                                                 </td>
                                             </tr>
                                         </tbody>
-                                    {% endfor %}
-                                </table>
-                            {% endfor %}
-                            <br>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <div class="result_card_completed">
-                    <div class="card">
-                        <div class="card-size">
-                            <div class="mid-element">
-                                <h2 class="card-title-completed">Completed / History List Todo</h2>
+                                    </table>
+                                {% endfor %}
                             </div>
-                            <br>
-                            {% for regular in completed_regular_tasks %}
-                                <table class="table table-columns table-hover lebar comp-table">
-                                    <thead class="table-dark">
-                                        {% if forloop.first %}
-                                        <tr>
-                                            <td class="todo-tipe-reg">Todo Type</td>
-                                            <td class="number-reg">No</td>
-                                            <td class="task-comp-reg">Task</td>
-                                            <td class="frequency-reg">Frequency</td>
-                                            <td class="action-reg">Actions</td>
-                                        </tr>
-                                        {% endif %}
-                                    </thead>
-                                    <tbody class="table-dark task-container">
-                                        <tr>
-                                            <td class="tipe-reg">{{ regular.task_types }}</td>
-                                            <td class="nomor-reg">{{ forloop.counter }}</td>
-                                            <td class="comp-task-reg"> {{ regular.task }} </td>
-                                            <td class="comp-frequency-reg">{{ regular.frequency }}</td>
-                                            <td class="action-reg">
-                                                <form method="post" action="{% url 'delete_todo' 'completed' regular.id %}">
-                                                    {% csrf_token %}
-                                                    <button class="btn btn-danger" type="submit">Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            {% endfor %}
-                            <br>
-                            {% for important in completed_important_tasks %}
-                                <table class="table table-columns table-hover lebar comp-table">
-                                    <thead class="table-dark">
-                                        {% if forloop.first %}
-                                            <tr>
-                                                <td class="todo-tipe-imp">Todo Type</td>
-                                                <td class="number-imp">No</td>
-                                                <td class="task-comp-imp">Task</td>
-                                                <td class="comp-imp-deadline">Deadline<br></td>
-                                                <td class="action-imp">Actions</td>
-                                            </tr>
-                                        {% endif %}
-                                    </thead>
-                                    <tbody class="table-dark urgent">
-                                        <tr>
-                                            <td class="tipe-imp">{{ important.task_types }}</td>
-                                            <td class="nomor-imp">{{ forloop.counter }}</td>
-                                            <td class="comp-task-imp">{{ important.task }}</td>
-                                            <td class="comp-deadline-imp">{{ important.due_date|date:"d F Y, H:i" }}</td>
-                                            <td class="action-imp">
-                                                <form method="post" action="{% url 'delete_todo' 'completed' important.id %}">
-                                                    {% csrf_token %}
-                                                    <button class="btn btn-danger" type="submit">Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            {% endfor %}
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        <br>
 
         <script src="{% static 'js/button-fungsi.js' %}"></script>
         <script src="{% static 'js/deadline-timer.js' %}"></script>
+        <script src="{% static 'js/pop-up-form.js' %}"></script>
         
         <style>
             .header{
@@ -494,6 +524,19 @@
                 color: rgba(223, 9, 133, 0.781);
                 font-weight: bold;
                 font-size: 20px;
+            }
+
+            .modal-title {
+                margin-left: 120px;
+                width: 320px;
+            }
+
+            .add-btn-position {
+                text-align: center;
+            }
+
+            .whole-body {
+                background-color: rgb(33,37,41);
             }
 
         </style>

@@ -2,7 +2,7 @@ document.querySelectorAll('.urgent').forEach(urgent => {
     const deadline = urgent.querySelector('#deadline')
     const importantTaskDeadline = urgent.querySelector('#importantTaskDeadline')
 
-    console.log(deadline.textContent)
+    // console.log(deadline.textContent)
     const deadlineDate = Date.parse(deadline.textContent)
 
     setInterval(() => {
@@ -27,4 +27,5 @@ document.querySelectorAll('.urgent').forEach(urgent => {
         }
     }, 1000)
 })
+
 
