@@ -3,3 +3,6 @@
 
 # folder virtual environment
 venv/
+
+# Client OAuth
+.Todo-List-OAuth-Client.json

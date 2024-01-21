@@ -14,6 +14,12 @@ from django.urls import reverse
 # from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 
+# login with google
+from social_django.utils import psa
+
+from django.http import HttpResponse
+from social_django.views import complete as social_auth_complete
+
 
 def signup(request):
     if request.method == 'POST':
@@ -77,4 +83,11 @@ def logout_user(request):
     return(redirect('login'))
 
 
-
+@psa('social:complete')
+def GoogleLoginView(request, backend, *args, **kwargs):
+    if request.user.is_authenticated:
+        return redirect('todo_list')
+    elif isinstance(backend, str):
+        return social_auth_complete (request, backend, *args, **kwargs)
+    else:
+        return HttpResponse("Invalid backend")
