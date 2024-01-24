@@ -14,11 +14,6 @@ from django.urls import reverse
 # from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 
-# login with google
-from social_django.utils import psa
-
-from django.http import HttpResponse
-from social_django.views import complete as social_auth_complete
 
 
 def signup(request):
@@ -30,7 +25,7 @@ def signup(request):
             user.save()
 
             subject = 'Aktivasi akun anda'
-            message = render_to_string('activation_email.html', {
+            message = render_to_string('accounts/activation_email.html', {
                 'user': user,
                 'domain': get_current_site(request).domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -83,11 +78,3 @@ def logout_user(request):
     return(redirect('login'))
 
 
-@psa('social:complete')
-def GoogleLoginView(request, backend, *args, **kwargs):
-    if request.user.is_authenticated:
-        return redirect('todo_list')
-    elif isinstance(backend, str):
-        return social_auth_complete (request, backend, *args, **kwargs)
-    else:
-        return HttpResponse("Invalid backend")

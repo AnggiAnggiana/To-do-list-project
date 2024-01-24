@@ -1,4 +1,6 @@
 {% extends 'layout.html' %}
+{% load static %}
+{% load allauth %}
 
 {% block content %}
     <div class="login-style">
@@ -44,8 +46,9 @@
             <br><br>
             <div class="form-mid">
                 <p>or login with:</p><br>
+                {% load socialaccount %}
                 <div class="login-ways">
-                    <a href="{% url 'google_login' backend='google-oauth2' %}">Login with Google</a>
+                    <a href="{% provider_login_url 'google' %}">Login With Google</a>
                 </div>
             </div>
         </form>

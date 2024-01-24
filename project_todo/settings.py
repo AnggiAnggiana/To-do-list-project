@@ -25,6 +25,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+SITE_ID = 2
+
 INSTALLED_APPS = [
     'todo.apps.ListTodoConfig',
     'django.contrib.admin',
@@ -33,9 +35,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'social_django',
     'accounts',
     'rest_framework',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -48,7 +54,6 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -57,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'project_todo.urls'
@@ -132,32 +138,19 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'todo/static'),
 )
 
-LOGIN_REDIRECT_URL = '/todo/'
-LOGOUT_REDIRECT_URL = '/accounts/login'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
+    "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '924660622897-rae30lb3ihg565d7vumkg56cr6ktdeug.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '924660622897-rae30lb3ihg565d7vumkg56cr6ktdeug.apps.googleusercontent.com'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'todo_list'
 
-# - Associations, berisi:
-#     Server url, Handle, secret, issued, lifetime, dan Assoc type.
-    
-# - Nonces, berisi:
-#     Server url, timestamp, dan salt.
-    
-# - User social auths, berisi:
-#     User, provider, Uid, Extra data, created, dan modified.
-    

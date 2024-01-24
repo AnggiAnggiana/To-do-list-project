@@ -5,4 +5,4 @@
 venv/
 
 # Client OAuth
-.Todo-List-OAuth-Client.json
+.Todo-List-oauth-client.json

@@ -1,5 +1,5 @@
 {% autoescape off %}
     Hai {{user.username}},
     silahkan klik disini untuk aktivasi
-    http://{{domain}}{% url 'activate' uidb64=uid token=token %}
+    {{domain}}{% url 'activate' uidb64=uid token=token %}
 {% endautoescape %}

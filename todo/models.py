@@ -82,5 +82,3 @@ def save_profile(sender, instance, created, **kwargs):
 
 def __str__(self):
     return self.user.username
-
-
