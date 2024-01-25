@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Projek To Do List
+{% endblock %}
+
+{% block body %}
+    <h2> Silahkan login terlebih dahulu</h2>
+    {% if request.user.username %}
+        <h3> Haii! {{request.user.username}} </h3>
+    {% endif %}
+{% endblock %}

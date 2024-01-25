@@ -1,4 +1,3 @@
-# INI APLIKASINYA / SAMA DENGAN BLOGS
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 # from rest_framework.response import Response
