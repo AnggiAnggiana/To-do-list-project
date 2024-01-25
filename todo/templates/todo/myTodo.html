@@ -1,0 +1,544 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <body>
+        <section>
+            <div class="header">
+                <h1 class="title">Project</h1>
+                <h2 class="subs">To - Do List</h2>
+                {% if request.user.username %}
+                    <div class="hi_user">
+                        <h3> Haii! {{request.user.username}} </h3>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+        {% if submitted %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+        <section>
+            <div class="whole-body">
+                <div class="badan">
+                    <div class="modal" id="addRegularTodoModal" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title">Add Regular Todo List</h3>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addRegularTodoForm" action="" class="form-control" method="POST">
+                                        {% csrf_token %}
+                                        {{ regular_form.task }}<br>
+                                        <label for="{{ regular_form.frequency.id_for_label }}">Type:</label>
+                                        <select class="form-select" name="{{ regular_form.frequency.name }}">
+                                            {% for frequency, frequency_label in regular_form.fields.frequency.choices %}
+                                                <option value="{{ frequency }}" {% if frequency == regular_form.instance.frequency %}selected{% endif %}>{{ frequency_label }}</option>
+                                            {% endfor %}
+                                        </select><br>
+                                        <div class="btn-pos">
+                                            <button type="submit" class="btn btn-primary md">Add</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="modal" id="addImportantTodoModal" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title">Add Important Todo List</h3>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addImportantTodoForm" action="" class="form-control" method="POST">
+                                        {% csrf_token %}
+                                        {{ urgent_form.task }}<br>
+                                        <label for="{{ urgent_form.due_date.id_for_label }}">Deadline:</label>
+                                        {{ urgent_form.due_date }}<br>
+                                        <div class="btn-pos">
+                                            <button type="submit" class="btn btn-primary">Add</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="show_result">
+                    <div class="result_card_regular">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mid-element">
+                                    <h2 class="card-title-regular">Regular Todo List</h2>
+                                </div>
+                                <br>
+                                {% for frequency, tasks in regular_task_group.items %}
+                                    <table class="table table-columns table-hover reg-list">
+                                        {% if forloop.first %}
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <td class="tipe">Type</td>
+                                                    <td class="number">No</td>
+                                                    <td class="task-reg">Task</td>
+                                                    <td class="status-reg">Actions</td>
+                                                </tr>
+                                            </thead>
+                                        {% endif %}
+                                        {% for regular in tasks %}
+                                            <tbody class="table-dark task-container">
+                                                <tr>
+                                                    <td class="card-text">{{ frequency }}</td>
+                                                    <td class="nomor">{{ forloop.counter }}</td>
+                                                    <td class="task-text"> {{ regular.task }} </td>
+                                                    <td colspan="2" class="completed-form-reg">
+                                                        <form method="post" action="{% url 'todo_list' %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="regular_move_to_completed_task" value="{{ regular.task }}">
+                                                            <button class="btn btn-success button-function comp-reg-btn" type="submit" data-url="{% url 'todo_list' %}" data-csrf="{{ csrf_token }}">Done</button>
+                                                        </form>
+                                                    </td>
+                                                    <td class="delete-form-reg">
+                                                        <form method="post" action="{% url 'delete_todo' 'regular' regular.id %}">
+                                                            {% csrf_token %}
+                                                            <button class="btn btn-danger" type="submit">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        {% endfor %}
+                                    </table>
+                                {% endfor %}
+                                <div class="add-btn-position">
+                                    <button class="btn btn-outline-primary" id="addRegularTodoBtn">Add Regular Todo List</button>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="result_card_urgent">
+                        <div class="card">
+                            <div class="card-size">
+                                <div class="mid-element">
+                                    <h2 class="card-title-important">Important Todo List</h2>
+                                </div>
+                                <br>
+                                {% for task, tasks in important_task_group.items %}
+                                    <table class="table table-columns table-hover lebar">
+                                        {% if forloop.first %}
+                                            <thead class="table-dark">
+                                                    <tr>
+                                                        <td class="task-imp">Task</td>
+                                                        <td class="deadline-imp">Deadline</td>
+                                                        <td class="remain-time-imp">Time left</td>
+                                                        <td class="status-imp">Actions</td>
+                                                    </tr>
+                                            </thead>
+                                        {% endif %}
+                                        {% for important in tasks %}
+                                            <tbody class="table-dark urgent">
+                                                <tr>
+                                                    <td class="task">{{ important.task }}</td>
+                                                    <td id="deadline" class="deadline">{{ important.due_date|date:"d F Y, H:i" }}</td>
+                                                    <td id="importantTaskDeadline" class="remain-time"></td>
+                                                    <td colspan="2" class="completed-form-reg">
+                                                        <form method="post" action="{% url 'todo_list' %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="important_move_to_completed_task" value="{{ important.task }}">
+                                                            <button class="btn btn-success button-function comp-reg-btn" type="submit" data-url="{% url 'todo_list' %}" data-csrf="{{ csrf_token }}">Done</button>
+                                                        </form>
+                                                    </td>
+                                                    <td class="delete-form-reg">
+                                                        <form method="post" action="{% url 'delete_todo' 'important' important.id %}">
+                                                            {% csrf_token %}
+                                                            <button class="btn btn-danger" type="submit">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        {% endfor %}
+                                    </table>
+                                {% endfor %}
+                                <div class="add-btn-position">
+                                    <button class="btn btn-outline-primary" id="addImportantTodoBtn">Add Important Todo List</button>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="result_card_completed">
+                        <div class="card">
+                            <div class="card-size">
+                                <div class="mid-element">
+                                    <h2 class="card-title-completed">Completed / History List Todo</h2>
+                                </div>
+                                <br>
+                                {% for regular in completed_regular_tasks %}
+                                    <table class="table table-columns table-hover lebar comp-table">
+                                        <thead class="table-dark">
+                                            {% if forloop.first %}
+                                            <tr>
+                                                <td class="todo-tipe-reg">Todo Type</td>
+                                                <td class="number-reg">No</td>
+                                                <td class="task-comp-reg">Task</td>
+                                                <td class="frequency-reg">Frequency</td>
+                                                <td class="action-reg">Actions</td>
+                                            </tr>
+                                            {% endif %}
+                                        </thead>
+                                        <tbody class="table-dark task-container">
+                                            <tr>
+                                                <td class="tipe-reg">{{ regular.task_types }}</td>
+                                                <td class="nomor-reg">{{ forloop.counter }}</td>
+                                                <td class="comp-task-reg"> {{ regular.task }} </td>
+                                                <td class="comp-frequency-reg">{{ regular.frequency }}</td>
+                                                <td class="action-reg">
+                                                    <form method="post" action="{% url 'delete_todo' 'completed' regular.id %}">
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-danger" type="submit">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                {% endfor %}
+                                <br>
+                                {% for important in completed_important_tasks %}
+                                    <table class="table table-columns table-hover lebar comp-table">
+                                        <thead class="table-dark">
+                                            {% if forloop.first %}
+                                                <tr>
+                                                    <td class="todo-tipe-imp">Todo Type</td>
+                                                    <td class="number-imp">No</td>
+                                                    <td class="task-comp-imp">Task</td>
+                                                    <td class="comp-imp-deadline">Deadline<br></td>
+                                                    <td class="action-imp">Actions</td>
+                                                </tr>
+                                            {% endif %}
+                                        </thead>
+                                        <tbody class="table-dark urgent">
+                                            <tr>
+                                                <td class="tipe-imp">{{ important.task_types }}</td>
+                                                <td class="nomor-imp">{{ forloop.counter }}</td>
+                                                <td class="comp-task-imp">{{ important.task }}</td>
+                                                <td class="comp-deadline-imp">{{ important.due_date|date:"d F Y, H:i" }}</td>
+                                                <td class="action-imp">
+                                                    <form method="post" action="{% url 'delete_todo' 'completed' important.id %}">
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-danger" type="submit">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script src="{% static 'js/button-fungsi.js' %}"></script>
+        <script src="{% static 'js/deadline-timer.js' %}"></script>
+        <script src="{% static 'js/pop-up-form.js' %}"></script>
+        
+        <style>
+            .header{
+                background-color: black;
+                height: 120px;
+                width: 100%;
+            }
+
+            .title{
+                color: yellow;
+                font-size: 30px;
+                font-weight: bold;
+                padding: 12px;
+                text-align: center;
+            }
+
+            .subs{
+                color: white;
+                font-size: 22px;
+                text-align: center;
+            }
+
+            .badan{
+                margin-left: 75px;
+                width: 85%;
+                display: flex;
+            }
+
+            .form-control {
+                margin-right: 50px;
+            }
+            
+            .result_card_regular {
+                margin-left: 75px;
+                width: 85%;
+                display: flex;
+            }
+
+            .result_card_urgent {
+                margin-left: 75px;
+                width: 85%;
+                display: flex;
+            }
+
+            .result_card_completed {
+                margin-left: 75px;
+                width: 85%;
+                display: flex;
+            }
+
+            .card {
+                margin-right: 30px;
+                width: 1109px;
+                background-color: #212529;
+            }
+
+            .card-size {
+                margin: 0px;
+            }
+
+            .card-title-regular {
+                color: rgba(6, 165, 77, 0.932);
+            }
+
+            .card-title-important {
+                color: rgba(219, 43, 43, 0.808);
+            }
+
+            .card-title-completed {
+                color: rgba(5, 171, 236, 0.664);
+            }
+
+            .hi_user {
+                color: rgb(255, 255, 255);
+                padding-top: 20px;
+                transform: translateX(-160px) translateY(-80px);
+                font-weight: 400;
+            }
+
+            h3{
+                width: 45%;
+                margin: 0% auto;
+                font-size: 20px;
+            }
+
+            .done{
+                text-decoration: line-through;
+            }
+
+            .selesai{
+                text-decoration: line-through;
+            }
+
+            #list_todo{
+                padding: 23px;
+            }
+
+            .btn-pos {
+                text-align: center;
+            }
+
+            .mid-element {
+                text-align: center;
+            }
+
+            .task-container {
+                display: flex;
+                
+            }
+
+            .completed-form-imp {
+                border-radius: 50px;
+                width: 20px;
+                height: 20px;
+                display: inline-block;
+            }
+
+            .lebar {
+                margin-top: -20px;
+            }
+
+            table {
+                table-layout: fixed;
+                width: 100%;
+            }
+
+            tr {
+                display: flex;
+                width: 100%;
+            }
+
+            td {
+                border-left: 1px solid white;
+                border-right: 1px solid white;
+                border-top: 1.5px solid white;
+                border-bottom: 1px solid white;
+                padding: 8px;
+                text-align: center;
+            }
+
+            td.task-imp, td.deadline-imp, td.remain-time-imp, td.status-imp {
+                color: orange;
+                font-weight: bold;
+                font-size: 20px;
+            }
+
+            td.tipe, td.number, td.task-reg, td.status-reg {
+                color: rgba(9, 151, 247, 0.781);
+                font-weight: bold;
+                font-size: 20px;
+            }
+
+            .tipe, .card-text {
+                width: 99px;
+            }
+
+            .number, .nomor {
+                width: 80px;
+            }
+
+            .task-reg, .task-text {
+                width: 440px;
+            }
+
+            .status-reg {
+                width: 175px;
+            }
+
+            .completed-form-reg {
+                border-right: none;
+            }
+
+            .comp-reg-btn {
+                width: 70px;
+                height: 40px;
+                border-right: none;
+            }
+
+            .delete-form-reg {
+                border-left: none;
+            }
+
+            .reg-list {
+                margin-left: 55px;
+            }
+
+            .task-imp {
+                width: 354px;
+            }
+
+            .task {
+                width: 688px;
+            }
+
+            .deadline-imp {
+                width: 220px;
+            }
+
+            .deadline {
+                width: 420px;
+            }
+
+            .remain-time-imp {
+                width: 284px;
+            }
+
+            .remain-time {
+                width: 550px;
+            }
+
+            .status-imp {
+                width: 180px;
+            }
+
+            .completed-form-imp {
+                width: 150px;
+            }
+
+            .todo-tipe-reg, .frequency-tipe {
+                width: 140px;
+            }
+
+            .todo-tipe-imp {
+                width: 140px;
+            }
+
+            .tipe-reg, .tipe-imp {
+                width: 140px;
+            }
+
+            .number-reg, .number-imp {
+                width: 60px;
+            }
+
+            .nomor-reg, .nomor-imp {
+                width: 60px;
+            }
+
+            .task-comp-reg, .task-comp-imp {
+                width: 360px;
+            }
+
+            .comp-task-reg, .comp-task-imp {
+                width: 360px;
+            }
+
+            .comp-deadline-imp, .comp-frequency-reg {
+                width: 200px;
+            }
+
+            .frequency-reg, .comp-imp-deadline {
+                width: 200px;
+            }
+
+            .action-reg, .action-imp {
+                width: 120px;
+            }
+
+            .comp-table {
+                margin-left: 55px;
+            }
+
+
+            td.todo-tipe-reg, td.todo-tipe-imp, td.frequency-tipe, td.number-reg, td.number-imp, td.task-comp-reg, td.task-comp-imp, td.frequency-reg, td.comp-imp-deadline, td.action-reg, td.action-imp {
+                color: rgba(223, 9, 133, 0.781);
+                font-weight: bold;
+                font-size: 20px;
+            }
+
+            .modal-title {
+                margin-left: 120px;
+                width: 320px;
+            }
+
+            .add-btn-position {
+                text-align: center;
+            }
+
+            .whole-body {
+                background-color: rgb(33,37,41);
+            }
+
+        </style>
+    </body>
+{% endblock %}

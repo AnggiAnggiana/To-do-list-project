@@ -1,0 +1,8 @@
+# file env (rahasia berisi data sensitif)
+.env
+
+# folder virtual environment
+env/
+
+# Client OAuth
+Todo-List-oauth-client.json
