@@ -59,17 +59,17 @@ class Completed_todo_list(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def save(self, *args, **kwargs):
-        if self.author_id is None:
-            self.author = get_user_model().objects.first()
+        if not self.author_id and kwargs.get('user'):
+            self.author = kwargs['user']
         super().save(*args, **kwargs)
     
     # Add the task from urgent_todo_list & Add the task from regular_todo_list
     @classmethod
     def move_task(cls, urgent_todo=None, regular_todo=None):        #cls = class
         if urgent_todo:
-            cls.objects.create(task=urgent_todo.task, task_types=cls.URGENT, due_date=urgent_todo.due_date)
+            cls.objects.create(task=urgent_todo.task, task_types=cls.URGENT, due_date=urgent_todo.due_date, author=urgent_todo.author)
         elif regular_todo:
-            cls.objects.create(task=regular_todo.task, task_types=cls.REGULAR, frequency=regular_todo.frequency)
+            cls.objects.create(task=regular_todo.task, task_types=cls.REGULAR, frequency=regular_todo.frequency, author=regular_todo.author)
     
     # Restore task from Completed_todo_list to Regular_todo_list
     @classmethod
