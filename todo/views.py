@@ -5,12 +5,14 @@ from django.contrib.auth.decorators import login_required
 
 # Untuk download file pdf
 # Install di command prompt: pip install reportlab django
-# import io
+import io
 # from django.http import FileResponse
-# from reportlab.pdfgen import canvas
-# from reportlab.lib.units import inch
-# from reportlab.lib.pagesizes import letter
-# from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+from django.http import HttpResponse
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 
 from .forms import Regular_todoForm
@@ -115,51 +117,91 @@ def delete_todo(request, task_type, todo_id):
 
         
 # DOWNLOAD FILE PDF
-# @login_required
-# def download_mylist_pdf(request):
-#     # Membuat Bytestream buffer
-#     buf = io.BytesIO()
+@login_required
+def download_mylist_pdf(request):
+    # Membuat Bytestream buffer
+    buf = io.BytesIO()
+    # doc = SimpleDocTemplate(buf, pagesize=letter)
     
-#     # Membuat canvas/blank page
-#     c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    # Membuat canvas/blank page
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
     
-#     # Membuat judul di pdf
-#     title_text = "Data Todo List Saya"
-#     c.setFont("Helvetica-Bold", 16)
+    # Membuat judul di pdf
+    title_text = "Data Todo List Saya"
+    c.setFont("Helvetica-Bold", 16)
     
-#     title_x_position = letter[0] / 2
-#     title_y_position = letter[0] - 8 * inch
-#     c.drawCentredString(title_x_position, title_y_position, title_text)
+    inch = 85
     
-#     # Membuat teks untuk object isi filenya
-#     textobject = c.beginText()
-#     textobject.setTextOrigin(inch, inch)
-#     textobject.setFont("Helvetica", 12)
+    title_x_position = letter[0] / 2
+    title_y_position = letter[0] / 15 
+    c.drawCentredString(title_x_position, title_y_position, title_text)
     
-#     # Isi dari filenya
-#     # TodoItems = TodoItem.objects.all()
+    # Membuat teks untuk object isi filenya
+    textobject = c.beginText()
+    textobject.setTextOrigin(inch, inch)
+    textobject.setFont("Helvetica", 12)
     
-#     # Membuat baris teks
-#     lines = []
+    # Isi dari filenya
+    regular_tasks = Regular_todo_list.objects.filter(author=request.user)
+    important_tasks = Urgent_todo_list.objects.filter(author=request.user)
+    completed_regular_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.REGULAR, author=request.user)
+    completed_important_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.URGENT, author=request.user)
     
-#     # for mytodo in TodoItems:
-#     #     lines.append(mytodo.task)
+    # Membuat baris teks
+    lines = []
+    
+    lines.append(["1. Regular Task:", ""])
+    if regular_tasks:
+        for i, regular_task in enumerate(regular_tasks):
+            lines.append([f"      {chr(97 + i)}) {regular_task.task}"])
+    else:
+        lines.append(["      None"])
         
-#     # Looping
-#     for baris in lines:
-#         textobject.textLine(baris)
         
-#     # Mengeksekusi/generate menjadi file
-#     c.drawText(textobject)
-#     c.showPage()
-#     c.save()
-#     buf.seek(0)
+    lines.append(["2. Important Task:", ""])
+    if important_tasks:
+        for i, important_task in enumerate(important_tasks):
+            lines.append([f"      {chr(97 + i)}) {important_task.task}"])
+    else:
+        lines.append(["      None"])
+        
+    lines.append(["3. Completed Regular Task:", ""])
+    if completed_regular_tasks:
+        for i, completed_regular_task in enumerate(completed_regular_tasks):
+            lines.append([f"      {chr(97 + i)}) {completed_regular_task.task}"])
+    else:
+        lines.append(["      None"])
+        
+    lines.append(["4. Completed Important Task:", ""])
+    if completed_important_tasks:
+        for i, completed_important_task in enumerate(completed_important_tasks):
+            lines.append([f"      {chr(97 + i)}) {completed_important_task.task}"])
+    else:
+        lines.append(["      None"])
+
+        
+    # Looping
+    # for baris in lines:
+    #     textobject.textLine(baris)
     
-#     # return FileResponse(buf, as_attachment=True, filename='mylist.pdf')
-#     response = HttpResponse(buf, content_type='application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename=mylist.pdf'
+    for line_pair in lines:
+        line_label = line_pair[0]
+        line_content = line_pair[1] if len(line_pair) > 1 else ""
+        
+        textobject.textLine(f"{line_label} {line_content} ")
+
+        
+    # Mengeksekusi/generate menjadi file
+    c.drawText(textobject)
+    c.showPage()
+    c.save()
+    buf.seek(0)
     
-#     return response
+    # return FileResponse(buf, as_attachment=True, filename='mylist.pdf')
+    response = HttpResponse(buf, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=Todo-List.pdf'
+    
+    return response
 
 
 # VERSI FILE PDF DENGAN TABEL
