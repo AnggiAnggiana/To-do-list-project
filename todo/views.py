@@ -44,12 +44,16 @@ def todo_list(request):
         important_move_to_completed_task = request.POST.get('important_move_to_completed_task')     # "Done" button function (important task)
         
         if regular_form.is_valid():
-            regular_form.save(commit=True, user=request.user)
+            regular_instance = regular_form.save(commit=False)
+            regular_instance.author = request.user
+            regular_instance.save()
             messages.success(request, 'Regular task successfully added')
             submitted = True
         
         if urgent_form.is_valid():
-            urgent_form.save(commit=True, user=request.user)
+            important_instance = urgent_form.save(commit=False)
+            important_instance.author = request.user
+            important_instance.save()
             messages.success(request, 'Important task successfully added')
             submitted = True
             
@@ -67,8 +71,8 @@ def todo_list(request):
             messages.success(request, 'Congratulations, you successfully completed your important task')
             return redirect('todo_list')
         
-    regular_task = Regular_todo_list.objects.all()
-    important_task = Urgent_todo_list.objects.all()
+    regular_task = Regular_todo_list.objects.filter(author=request.user)
+    important_task = Urgent_todo_list.objects.filter(author=request.user)
     
     # Grouping element regular_form by frequncy (regular task)
     regular_task_group = {k: list(g) for k, g in groupby(sorted(regular_task, key=lambda x: x.frequency), key=lambda x: x.frequency)}
@@ -76,8 +80,8 @@ def todo_list(request):
     important_task_group = {k: list(g) for k, g in groupby(sorted(important_task, key=lambda x: x.task), key=lambda x: x.task)}
             
     # Get completed tasks of 'Regular' and 'Urgent' separately
-    completed_regular_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.REGULAR)
-    completed_important_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.URGENT)
+    completed_regular_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.REGULAR, author=request.user)
+    completed_important_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.URGENT, author=request.user)
     
     return render(request, 'todo/myTodo.html', {
         'regular_form': regular_form,

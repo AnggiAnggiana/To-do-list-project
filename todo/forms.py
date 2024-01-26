@@ -72,10 +72,11 @@ class Completed_todoForm(ModelForm):
     
     class Meta:
         model = Completed_todo_list
-        fields = ('regular_task', 'urgent_task')
+        fields = ('regular_task', 'urgent_task', 'author')
         labels = {
             'regular_task': 'Completed Regular Todo List',
             'urgent_task': 'Completed Urgent Todo List',
+            'author': '',
         }
         
         # Styling Form
@@ -83,6 +84,18 @@ class Completed_todoForm(ModelForm):
             'regular_task': forms.Select(attrs={'class': 'form-select'}),
             'urgent_task': forms.Select(attrs={'class': 'form-select'}),
         }
+        
+    def __init__(self, *args, **kwargs):
+        super(Completed_todoForm, self).__init__(*args, **kwargs)
+        self.fields['author'].required = False
+        
+    def save(self, commit=True, user=None):
+        instance = super(Completed_todoForm, self).save(commit=False)
+        if not instance.author_id and user:
+            instance.author = user
+        if commit:
+            instance.save()
+        return instance
 
 from django import forms
 from django.forms import ModelForm
