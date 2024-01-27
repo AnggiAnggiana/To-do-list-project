@@ -44,6 +44,9 @@ class Urgent_todo_list(models.Model):
     def __str__(self):
         return self.task
     
+    def has_task_on_date(self, check_date):
+        return self.due_date.date() == check_date.date()
+    
 class Completed_todo_list(models.Model):
     REGULAR = 'Regular'
     URGENT= 'Important'

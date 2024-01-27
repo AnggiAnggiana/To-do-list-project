@@ -4,6 +4,11 @@
 {% block content %}
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css" />
+    <script src="https://cdnjs.clouflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+
 
     <body>
         <section>
@@ -247,6 +252,11 @@
                                         </tbody>
                                     </table>
                                 {% endfor %}
+                                <div class="container">
+                                    <div id="calendar">
+                                        
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -257,6 +267,8 @@
         <script src="{% static 'js/button-fungsi.js' %}"></script>
         <script src="{% static 'js/deadline-timer.js' %}"></script>
         <script src="{% static 'js/pop-up-form.js' %}"></script>
+        <script src="{% static 'js/calendar.js' %}"></script>
+        
         
         <style>
             .header{
@@ -310,7 +322,7 @@
             .card {
                 margin-right: 10px;
                 width: 1009px;
-                background-color: #212529;
+                background-color: #eaf1f8;
                 /* border: solid #212529; */
             }
 
@@ -538,6 +550,35 @@
 
             .whole-body {
                 background-color: rgb(33,37,41);
+            }
+
+
+            #calendar thead tr {
+                width: 990px;
+            }
+
+            #calendar thead tr th {
+                width: 160px;
+                font-weight: 600;
+            }
+
+            #calendar thead tr th {
+                color: orange;
+                text-decoration: none;
+                border-left: gray;
+                border-right: gray;
+                border-top: solid gray;
+                border-bottom: solid gray;
+            }
+
+            #calendar tbody tr table {
+                width: 990px;
+                border-left: solid gray;
+                border-right: solid gray;
+            }
+
+            #calendar tbody tr table thead tr td {
+                width: 138px;
             }
 
         </style>

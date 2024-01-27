@@ -85,6 +85,25 @@ def todo_list(request):
     completed_regular_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.REGULAR, author=request.user)
     completed_important_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.URGENT, author=request.user)
     
+    # For Calendar
+    selected_date = request.GET.get('selected_date')
+    tasks_on_selected_date = []
+    if selected_date:
+        tasks_on_selected_date = Urgent_todo_list.objects.filter(author=request.user, due_date__date=selected_date)
+        
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data = {
+            'events': [
+                {
+                    'title': important_task.task,
+                    'start': important_task.due_date.strftime("%d %B %Y, %H:%M"),
+                    'color': 'blue' if important_task.has_task_on_date(selected_date) else 'white',
+                }
+                for important_task in tasks_on_selected_date
+            ]
+        }
+        return JsonResponse(data)
+    
     return render(request, 'todo/myTodo.html', {
         'regular_form': regular_form,
         'urgent_form': urgent_form,
@@ -97,6 +116,7 @@ def todo_list(request):
         'important_move_to_completed_task': important_move_to_completed_task,
         'completed_regular_tasks': completed_regular_tasks,
         'completed_important_tasks': completed_important_tasks,
+        'selected_date': selected_date,
     })
     
 @login_required
