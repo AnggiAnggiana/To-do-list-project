@@ -153,7 +153,7 @@ def download_mylist_pdf(request):
     lines.append(["1. Regular Task:", ""])
     if regular_tasks:
         for i, regular_task in enumerate(regular_tasks):
-            lines.append([f"      {chr(97 + i)}) {regular_task.task}"])
+            lines.append([f"      {chr(97 + i)}) ({regular_task.frequency}) {regular_task.task}"])
     else:
         lines.append(["      None"])
         
@@ -161,21 +161,23 @@ def download_mylist_pdf(request):
     lines.append(["2. Important Task:", ""])
     if important_tasks:
         for i, important_task in enumerate(important_tasks):
-            lines.append([f"      {chr(97 + i)}) {important_task.task}"])
+            formatted_due_date = important_task.due_date.strftime("%d %B %Y, %H:%M")
+            lines.append([f"      {chr(97 + i)}) {important_task.task} | Deadline: {formatted_due_date}"])
     else:
         lines.append(["      None"])
         
     lines.append(["3. Completed Regular Task:", ""])
     if completed_regular_tasks:
         for i, completed_regular_task in enumerate(completed_regular_tasks):
-            lines.append([f"      {chr(97 + i)}) {completed_regular_task.task}"])
+            lines.append([f"      {chr(97 + i)}) ({completed_regular_task.frequency}) {completed_regular_task.task}"])
     else:
         lines.append(["      None"])
         
     lines.append(["4. Completed Important Task:", ""])
     if completed_important_tasks:
         for i, completed_important_task in enumerate(completed_important_tasks):
-            lines.append([f"      {chr(97 + i)}) {completed_important_task.task}"])
+            formatted_completed_due_date = completed_important_task.due_date.strftime("%d %B %Y, %H:%M")
+            lines.append([f"      {chr(97 + i)}) {completed_important_task.task} | Deadline: {formatted_completed_due_date}"])
     else:
         lines.append(["      None"])
 
