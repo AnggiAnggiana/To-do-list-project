@@ -553,34 +553,53 @@
             }
 
 
-            #calendar thead tr {
-                width: 990px;
+            /* Calendar head */
+            #calendar {
+                width: 600px;
+                border-right: solid blue;
             }
 
-            #calendar thead tr th {
-                width: 160px;
-                font-weight: 600;
+            #calendar table {
+                width: 600px;
             }
 
-            #calendar thead tr th {
+            #calendar table thead tr td table thead tr th {
+                width: 83px;
+                font-weight: 500;
                 color: orange;
                 text-decoration: none;
-                border-left: gray;
-                border-right: gray;
-                border-top: solid gray;
-                border-bottom: solid gray;
+                border-top: solid red;
+                border-right: solid red;
+                border-bottom: solid green;
             }
 
-            #calendar tbody tr table {
-                width: 990px;
-                border-left: solid gray;
-                border-right: solid gray;
+            #calendar table thead tr td table thead tr th:first-child {
+                border-left: solid red;
             }
 
-            #calendar tbody tr table thead tr td {
-                width: 138px;
+
+            /* Body */
+            #calendar table tbody tr td table  {
+                width: 600px;
+                padding-top: -6px;;
+                border-left: solid green;
+                border-right: solid green;
+                /* border-bottom: solid green; */
             }
 
+            #calendar table tbody tr td table thead tr {
+                border-top: solid green;
+            }
+
+            #calendar table tbody tr td table thead tr td {
+                width: 300px;
+                border-left: solid aqua;
+                border-top: none;
+            }
+
+            #calendar table tbody tr td table thead tr td:first-child {
+                border-left: none;
+            }
         </style>
     </body>
 {% endblock %}
