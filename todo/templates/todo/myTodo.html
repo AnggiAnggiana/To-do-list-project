@@ -4,10 +4,35 @@
 {% block content %}
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css" />
-    <script src="https://cdnjs.clouflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <!-- FullCalendar -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let calendarEl = document.getElementById('calendar');
+            let calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: '/todo/todo_list/data_calendar',
+
+                eventDidMount: function (info) {
+                    // Convert time from am&pm to 24 hours
+                    let formattedDate = new Date(info.event.start).toLocaleString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour24: true
+                    })
+                    info.el.querySelector('.fc-event-time').innerHTML = formattedDate
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
+
 
 
     <body>
@@ -95,7 +120,7 @@
                                     <table class="table table-columns table-hover reg-list">
                                         {% if forloop.first %}
                                             <thead class="table-dark">
-                                                <tr>
+                                                <tr class="tr-regular">
                                                     <td class="tipe">Type</td>
                                                     <td class="number">No</td>
                                                     <td class="task-reg">Task</td>
@@ -105,7 +130,7 @@
                                         {% endif %}
                                         {% for regular in tasks %}
                                             <tbody class="table-dark task-container">
-                                                <tr>
+                                                <tr class="tr-regular">
                                                     <td class="card-text">{{ frequency }}</td>
                                                     <td class="nomor">{{ forloop.counter }}</td>
                                                     <td class="task-text"> {{ regular.task }} </td>
@@ -146,7 +171,7 @@
                                     <table class="table table-columns table-hover lebar">
                                         {% if forloop.first %}
                                             <thead class="table-dark">
-                                                    <tr>
+                                                    <tr class="tr-important">
                                                         <td class="task-imp">Task</td>
                                                         <td class="deadline-imp">Deadline</td>
                                                         <td class="remain-time-imp">Time left</td>
@@ -156,7 +181,7 @@
                                         {% endif %}
                                         {% for important in tasks %}
                                             <tbody class="table-dark urgent">
-                                                <tr>
+                                                <tr class="tr-important">
                                                     <td class="task">{{ important.task }}</td>
                                                     <td id="deadline" class="deadline">{{ important.due_date|date:"d F Y, H:i" }}</td>
                                                     <td id="importantTaskDeadline" class="remain-time"></td>
@@ -197,7 +222,7 @@
                                     <table class="table table-columns table-hover lebar comp-table">
                                         <thead class="table-dark">
                                             {% if forloop.first %}
-                                            <tr>
+                                            <tr class="tr-comp-regular">
                                                 <td class="todo-tipe-reg">Todo Type</td>
                                                 <td class="number-reg">No</td>
                                                 <td class="task-comp-reg">Task</td>
@@ -207,7 +232,7 @@
                                             {% endif %}
                                         </thead>
                                         <tbody class="table-dark task-container">
-                                            <tr>
+                                            <tr class="tr-comp-regular">
                                                 <td class="tipe-reg">{{ regular.task_types }}</td>
                                                 <td class="nomor-reg">{{ forloop.counter }}</td>
                                                 <td class="comp-task-reg"> {{ regular.task }} </td>
@@ -227,7 +252,7 @@
                                     <table class="table table-columns table-hover lebar comp-table">
                                         <thead class="table-dark">
                                             {% if forloop.first %}
-                                                <tr>
+                                                <tr class="tr-comp-important">
                                                     <td class="todo-tipe-imp">Todo Type</td>
                                                     <td class="number-imp">No</td>
                                                     <td class="task-comp-imp">Task</td>
@@ -237,7 +262,7 @@
                                             {% endif %}
                                         </thead>
                                         <tbody class="table-dark urgent">
-                                            <tr>
+                                            <tr class="tr-comp-important">
                                                 <td class="tipe-imp">{{ important.task_types }}</td>
                                                 <td class="nomor-imp">{{ forloop.counter }}</td>
                                                 <td class="comp-task-imp">{{ important.task }}</td>
@@ -252,22 +277,25 @@
                                         </tbody>
                                     </table>
                                 {% endfor %}
-                                <div class="container">
-                                    <div id="calendar">
-                                        
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="container">
+                <div class="row">
+                    <div id="calendar">
+                        
+                    </div>
+                </div>
+            </div>
         </section>
+
 
         <script src="{% static 'js/button-fungsi.js' %}"></script>
         <script src="{% static 'js/deadline-timer.js' %}"></script>
         <script src="{% static 'js/pop-up-form.js' %}"></script>
-        <script src="{% static 'js/calendar.js' %}"></script>
+        
         
         
         <style>
@@ -322,8 +350,8 @@
             .card {
                 margin-right: 10px;
                 width: 1009px;
-                background-color: #eaf1f8;
-                /* border: solid #212529; */
+                background-color: #212529;
+                border: solid #212529;
             }
 
             .card-size {
@@ -377,7 +405,6 @@
 
             .task-container {
                 display: flex;
-                
             }
 
             .completed-form-imp {
@@ -391,12 +418,14 @@
                 margin-top: -20px;
             }
 
+            
             table {
                 table-layout: fixed;
                 width: 100%;
             }
 
-            tr {
+
+            .tr-regular, .tr-important, .tr-comp-regular, .tr-comp-important {
                 display: flex;
                 width: 100%;
             }
@@ -552,54 +581,37 @@
                 background-color: rgb(33,37,41);
             }
 
-
-            /* Calendar head */
             #calendar {
-                width: 600px;
-                border-right: solid blue;
+                width: 2750px;
             }
 
-            #calendar table {
-                width: 600px;
-            }
-
-            #calendar table thead tr td table thead tr th {
-                width: 83px;
+            #calendar #fc-dom-1 {
                 font-weight: 500;
-                color: orange;
+                font-size: 25px;
+            }
+
+            #calendar table thead tr th table thead tr th a {
                 text-decoration: none;
-                border-top: solid red;
-                border-right: solid red;
-                border-bottom: solid green;
+                color: black;
             }
 
-            #calendar table thead tr td table thead tr th:first-child {
-                border-left: solid red;
+            #calendar table tbody tr td table tbody tr td a {
+                text-decoration: none;
+                color: black;
             }
 
-
-            /* Body */
-            #calendar table tbody tr td table  {
-                width: 600px;
-                padding-top: -6px;;
-                border-left: solid green;
-                border-right: solid green;
-                /* border-bottom: solid green; */
+            #calendar table tbody tr td table tbody tr td .fc-daygrid-day-events a {
+                background-color: #3788D8;
             }
 
-            #calendar table tbody tr td table thead tr {
-                border-top: solid green;
+            #calendar table tbody tr td table tbody tr td .fc-daygrid-day-events a .fc-event-time {
+                color: white;
             }
 
-            #calendar table tbody tr td table thead tr td {
-                width: 300px;
-                border-left: solid aqua;
-                border-top: none;
+            #calendar table tbody tr td table tbody tr td .fc-daygrid-day-events a .fc-event-title {
+                color: white;
             }
 
-            #calendar table tbody tr td table thead tr td:first-child {
-                border-left: none;
-            }
         </style>
     </body>
 {% endblock %}

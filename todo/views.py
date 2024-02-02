@@ -22,6 +22,9 @@ from django.urls import reverse
 from .models import Regular_todo_list, Urgent_todo_list, Completed_todo_list
 from django.contrib import messages
 
+from django.utils import timezone
+import json
+
 # import groupby
 from itertools import groupby
 
@@ -74,35 +77,24 @@ def todo_list(request):
             return redirect('todo_list')
         
     regular_task = Regular_todo_list.objects.filter(author=request.user)
-    important_task = Urgent_todo_list.objects.filter(author=request.user)
+    important_task = Urgent_todo_list.objects.filter(author=request.user).order_by('due_date')
     
     # Grouping element regular_form by frequncy (regular task)
     regular_task_group = {k: list(g) for k, g in groupby(sorted(regular_task, key=lambda x: x.frequency), key=lambda x: x.frequency)}
     # Grouping element in important task
-    important_task_group = {k: list(g) for k, g in groupby(sorted(important_task, key=lambda x: x.task), key=lambda x: x.task)}
+    # important_task_group = {k: list(g) for k, g in groupby(sorted(important_task, key=lambda x: x.task), key=lambda x: x.task)}
+    important_task_group = {k: sorted(list(g), key=lambda x: x.due_date) for k, g in groupby(important_task, key=lambda x: x.task)}
             
     # Get completed tasks of 'Regular' and 'Urgent' separately
     completed_regular_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.REGULAR, author=request.user)
     completed_important_tasks = Completed_todo_list.objects.filter(task_types=Completed_todo_list.URGENT, author=request.user)
     
     # For Calendar
-    selected_date = request.GET.get('selected_date')
-    tasks_on_selected_date = []
-    if selected_date:
-        tasks_on_selected_date = Urgent_todo_list.objects.filter(author=request.user, due_date__date=selected_date)
-        
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        data = {
-            'events': [
-                {
-                    'title': important_task.task,
-                    'start': important_task.due_date.strftime("%d %B %Y, %H:%M"),
-                    'color': 'blue' if important_task.has_task_on_date(selected_date) else 'white',
-                }
-                for important_task in tasks_on_selected_date
-            ]
-        }
-        return JsonResponse(data)
+    
+    # selected_date = Regular_todo_list.objects.filter(author=request.user)
+    # context = {
+    #     "events": selected_date,
+    # }
     
     return render(request, 'todo/myTodo.html', {
         'regular_form': regular_form,
@@ -116,8 +108,16 @@ def todo_list(request):
         'important_move_to_completed_task': important_move_to_completed_task,
         'completed_regular_tasks': completed_regular_tasks,
         'completed_important_tasks': completed_important_tasks,
-        'selected_date': selected_date,
+        # 'selected_date': selected_date,
+        # 'context': context,
     })
+    
+@login_required
+def data_calendar(request):
+    selected_date = Urgent_todo_list.objects.filter(author=request.user)
+    events = [{'title': task.task, 'start': timezone.localtime(task.due_date).strftime('%Y-%m-%d %H:%M:%S'),} for task in selected_date]
+    return JsonResponse(events, safe=False)
+    
     
 @login_required
 def delete_todo(request, task_type, todo_id):
@@ -134,6 +134,7 @@ def delete_todo(request, task_type, todo_id):
     delete_task.delete()
     messages.success(request, 'Task successfully deleted')
     return redirect('todo_list')
+
 
         
 # DOWNLOAD FILE PDF
