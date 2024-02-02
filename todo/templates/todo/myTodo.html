@@ -280,12 +280,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="container">
-                <div class="row">
-                    <div id="calendar">
-                        
+                    <div class="container">
+                        <div class="row">
+                            <div id="calendar">
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -581,35 +581,50 @@
                 background-color: rgb(33,37,41);
             }
 
+
+            /* Calendar */
             #calendar {
-                width: 2750px;
+                width: 750px;
             }
 
             #calendar #fc-dom-1 {
                 font-weight: 500;
                 font-size: 25px;
+                color: rgba(252, 165, 4, 0.712)
             }
 
             #calendar table thead tr th table thead tr th a {
                 text-decoration: none;
-                color: black;
+                color: white;
             }
 
             #calendar table tbody tr td table tbody tr td a {
                 text-decoration: none;
-                color: black;
+                color: white;
             }
 
-            #calendar table tbody tr td table tbody tr td .fc-daygrid-day-events a {
+            .fc-daygrid-day-frame .fc-daygrid-day-events a {
                 background-color: #3788D8;
+                width: 90px;
             }
 
-            #calendar table tbody tr td table tbody tr td .fc-daygrid-day-events a .fc-event-time {
-                color: white;
+            .fc-event {
+                display: flex;
+                flex-direction: column;
             }
 
-            #calendar table tbody tr td table tbody tr td .fc-daygrid-day-events a .fc-event-title {
+            .fc-event .fc-event-time {
                 color: white;
+                font-size: 13px;
+                text-align: center;
+                margin-top: -10px;
+            }
+
+            .fc-event .fc-event-title {
+                color: white;
+                font-size: 12px;
+                text-align: center;
+                margin-top: -4px;
             }
 
         </style>
